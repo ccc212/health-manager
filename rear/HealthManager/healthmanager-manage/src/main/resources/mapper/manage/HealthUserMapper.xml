@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.manage.mapper.HealthUserMapper">
+
+    <resultMap type="HealthUser" id="HealthUserResult">
+        <result property="userId"    column="user_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="email"    column="email"    />
+        <result property="password"    column="password"    />
+        <result property="name"    column="name"    />
+        <result property="phoneNumber"    column="phone_number"    />
+        <result property="gender"    column="gender"    />
+        <result property="birthDate"    column="birth_date"    />
+        <result property="avatar"    column="avatar"    />
+        <result property="status"    column="status"    />
+        <result property="lastLoginTime"    column="last_login_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectHealthUserVo">
+        select user_id, user_name, email, password, name, phone_number, gender, birth_date, avatar, status, last_login_time, create_time, update_time from health_user
+    </sql>
+
+    <select id="selectHealthUserList" parameterType="HealthUser" resultMap="HealthUserResult">
+        <include refid="selectHealthUserVo"/>
+        <where>
+            <if test="userName != null  and userName != ''"> and user_name = #{userName}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="phoneNumber != null  and phoneNumber != ''"> and phone_number = #{phoneNumber}</if>
+            <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
+            <if test="birthDate != null "> and birth_date = #{birthDate}</if>
+            <if test="avatar != null  and avatar != ''"> and avatar = #{avatar}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="lastLoginTime != null "> and last_login_time = #{lastLoginTime}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+        </where>
+    </select>
+
+    <select id="selectHealthUserByUserId" parameterType="Long" resultMap="HealthUserResult">
+        <include refid="selectHealthUserVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insertHealthUser" parameterType="HealthUser" useGeneratedKeys="true" keyProperty="userId">
+        insert into health_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null and userName != ''">user_name,</if>
+            <if test="email != null and email != ''">email,</if>
+            <if test="password != null and password != ''">password,</if>
+            <if test="name != null">name,</if>
+            <if test="phoneNumber != null">phone_number,</if>
+            <if test="gender != null">gender,</if>
+            <if test="birthDate != null">birth_date,</if>
+            <if test="avatar != null">avatar,</if>
+            <if test="status != null">status,</if>
+            <if test="lastLoginTime != null">last_login_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null and userName != ''">#{userName},</if>
+            <if test="email != null and email != ''">#{email},</if>
+            <if test="password != null and password != ''">#{password},</if>
+            <if test="name != null">#{name},</if>
+            <if test="phoneNumber != null">#{phoneNumber},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="birthDate != null">#{birthDate},</if>
+            <if test="avatar != null">#{avatar},</if>
+            <if test="status != null">#{status},</if>
+            <if test="lastLoginTime != null">#{lastLoginTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateHealthUser" parameterType="HealthUser">
+        update health_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="phoneNumber != null">phone_number = #{phoneNumber},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="birthDate != null">birth_date = #{birthDate},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="lastLoginTime != null">last_login_time = #{lastLoginTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteHealthUserByUserId" parameterType="Long">
+        delete from health_user where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteHealthUserByUserIds" parameterType="String">
+        delete from health_user where user_id in
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+</mapper>

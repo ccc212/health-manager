@@ -11,10 +11,23 @@
     <artifactId>healthmanager-manage</artifactId>
 
     <dependencies>
+        <!-- junit -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- swagger3-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+        </dependency>
+
+        <!-- 核心模块-->
+        <dependency>
+            <groupId>com.healthmanager</groupId>
+            <artifactId>healthmanager-framework</artifactId>
         </dependency>
     </dependencies>
 

@@ -113,9 +113,9 @@ public class SwaggerConfig
         // 用ApiInfoBuilder进行定制
         return new ApiInfoBuilder()
                 // 设置标题
-                .title("标题：若依管理系统_接口文档")
+                .title("标题：健康管理系统_接口文档")
                 // 描述
-                .description("描述：用于管理集团旗下公司的人员信息,具体包括XXX,XXX模块...")
+                .description("描述：这是一个提供个性化健身计划、心理咨询、医疗建议和预约管理的用户友好型健康管理平台")
                 // 作者信息
                 .contact(new Contact(ruoyiConfig.getName(), null, null))
                 // 版本

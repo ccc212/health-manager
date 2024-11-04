@@ -61,6 +61,12 @@
             <artifactId>healthmanager-generator</artifactId>
         </dependency>
 
+        <!-- 健康管理-->
+        <dependency>
+            <groupId>com.healthmanager</groupId>
+            <artifactId>healthmanager-manage</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
