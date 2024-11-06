@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.manage.mapper.FitnessPlanMapper">
+    
+    <resultMap type="FitnessPlan" id="FitnessPlanResult">
+        <result property="planId"    column="plan_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="goals"    column="goals"    />
+        <result property="initialStatus"    column="initial_status"    />
+        <result property="currentStatus"    column="current_status"    />
+        <result property="progress"    column="progress"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectFitnessPlanVo">
+        select plan_id, user_id, goals, initial_status, current_status, progress, create_time, update_time from health_fitness_plan
+    </sql>
+
+    <select id="selectFitnessPlanList" parameterType="FitnessPlan" resultMap="FitnessPlanResult">
+        <include refid="selectFitnessPlanVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="progress != null  and progress != ''"> and progress = #{progress}</if>
+        </where>
+    </select>
+    
+    <select id="selectFitnessPlanByPlanId" parameterType="Long" resultMap="FitnessPlanResult">
+        <include refid="selectFitnessPlanVo"/>
+        where plan_id = #{planId}
+    </select>
+
+    <insert id="insertFitnessPlan" parameterType="FitnessPlan" useGeneratedKeys="true" keyProperty="planId">
+        insert into health_fitness_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="goals != null">goals,</if>
+            <if test="initialStatus != null">initial_status,</if>
+            <if test="currentStatus != null">current_status,</if>
+            <if test="progress != null">progress,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="goals != null">#{goals},</if>
+            <if test="initialStatus != null">#{initialStatus},</if>
+            <if test="currentStatus != null">#{currentStatus},</if>
+            <if test="progress != null">#{progress},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFitnessPlan" parameterType="FitnessPlan">
+        update health_fitness_plan
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="goals != null">goals = #{goals},</if>
+            <if test="initialStatus != null">initial_status = #{initialStatus},</if>
+            <if test="currentStatus != null">current_status = #{currentStatus},</if>
+            <if test="progress != null">progress = #{progress},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where plan_id = #{planId}
+    </update>
+
+    <delete id="deleteFitnessPlanByPlanId" parameterType="Long">
+        delete from health_fitness_plan where plan_id = #{planId}
+    </delete>
+
+    <delete id="deleteFitnessPlanByPlanIds" parameterType="String">
+        delete from health_fitness_plan where plan_id in 
+        <foreach item="planId" collection="array" open="(" separator="," close=")">
+            #{planId}
+        </foreach>
+    </delete>
+</mapper>

@@ -33,16 +33,6 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="性别" prop="gender">
-        <el-select v-model="queryParams.gender" placeholder="请选择性别" clearable>
-          <el-option
-            v-for="dict in user_gender"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="出生日期" prop="birthDate">
         <el-date-picker clearable
           v-model="queryParams.birthDate"
@@ -127,16 +117,11 @@
 
     <el-table v-loading="loading" :data="healthuserList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" type="index" align="center" />
+      <el-table-column label="序号" type="index" width="50" align="center" />
       <el-table-column label="用户账号" align="center" prop="userName" />
       <el-table-column label="用户邮箱" align="center" prop="email" />
       <el-table-column label="用户昵称" align="center" prop="name" />
       <el-table-column label="手机号码" align="center" prop="phoneNumber" />
-      <el-table-column label="性别" align="center" prop="gender">
-        <template #default="scope">
-          <dict-tag :options="user_gender" :value="scope.row.gender"/>
-        </template>
-      </el-table-column>
       <el-table-column label="出生日期" align="center" prop="birthDate" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.birthDate, '{y}-{m}-{d}') }}</span>
@@ -209,16 +194,6 @@
         <el-form-item label="手机号码" prop="phoneNumber">
           <el-input v-model="form.phoneNumber" placeholder="请输入手机号码" />
         </el-form-item>
-        <el-form-item label="性别" prop="gender">
-          <el-select v-model="form.gender" placeholder="请选择性别">
-            <el-option
-                v-for="dict in user_gender"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="出生日期" prop="birthDate">
           <el-date-picker clearable
                           v-model="form.birthDate"
@@ -245,7 +220,7 @@
 import { listHealthuser, getHealthuser, delHealthuser, addHealthuser, updateHealthuser } from "@/api/manage/healthuser";
 
 const { proxy } = getCurrentInstance();
-const { user_gender, account_status } = proxy.useDict('user_gender', 'account_status');
+const { account_status } = proxy.useDict( 'account_status');
 
 const healthuserList = ref([]);
 const open = ref(false);
@@ -266,7 +241,6 @@ const data = reactive({
     email: null,
     name: null,
     phoneNumber: null,
-    gender: null,
     birthDate: null,
     avatar: null,
     status: null,
@@ -313,7 +287,6 @@ function reset() {
     password: null,
     name: null,
     phoneNumber: null,
-    gender: null,
     birthDate: null,
     avatar: null,
     status: null,

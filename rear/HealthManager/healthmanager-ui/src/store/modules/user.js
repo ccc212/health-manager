@@ -1,5 +1,5 @@
 import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import {getToken, setToken, removeToken, getJwt, setJwt, removeJwt} from '@/utils/auth'
 import defAva from '@/assets/images/profile.jpg'
 
 const useUserStore = defineStore(
@@ -7,6 +7,7 @@ const useUserStore = defineStore(
   {
     state: () => ({
       token: getToken(),
+      jwt: getJwt(),
       id: '',
       name: '',
       avatar: '',
@@ -23,7 +24,9 @@ const useUserStore = defineStore(
         return new Promise((resolve, reject) => {
           login(username, password, code, uuid).then(res => {
             setToken(res.token)
+            setJwt(res.jwt)
             this.token = res.token
+            this.jwt = res.jwt
             resolve()
           }).catch(error => {
             reject(error)
@@ -57,9 +60,11 @@ const useUserStore = defineStore(
         return new Promise((resolve, reject) => {
           logout(this.token).then(() => {
             this.token = ''
+            this.jwt = ''
             this.roles = []
             this.permissions = []
             removeToken()
+            removeJwt()
             resolve()
           }).catch(error => {
             reject(error)

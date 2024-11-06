@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询用户信息列表
 export function listHealthuser(query) {
   return request({
-    url: '/manage/healthuser/list',
+    url: '/manage/healthuser/info/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listHealthuser(query) {
 // 查询用户信息详细
 export function getHealthuser(userId) {
   return request({
-    url: '/manage/healthuser/' + userId,
+    url: '/manage/healthuser/info/' + userId,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getHealthuser(userId) {
 // 新增用户信息
 export function addHealthuser(data) {
   return request({
-    url: '/manage/healthuser',
+    url: '/manage/healthuser/info',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addHealthuser(data) {
 // 修改用户信息
 export function updateHealthuser(data) {
   return request({
-    url: '/manage/healthuser',
+    url: '/manage/healthuser/info',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateHealthuser(data) {
 // 删除用户信息
 export function delHealthuser(userId) {
   return request({
-    url: '/manage/healthuser/' + userId,
+    url: '/manage/healthuser/info/' + userId,
     method: 'delete'
   })
 }

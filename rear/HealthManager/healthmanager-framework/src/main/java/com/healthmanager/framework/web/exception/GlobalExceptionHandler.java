@@ -1,10 +1,13 @@
 package com.healthmanager.framework.web.exception;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
@@ -19,6 +22,8 @@ import com.healthmanager.common.exception.ServiceException;
 import com.healthmanager.common.utils.StringUtils;
 import com.healthmanager.common.utils.html.EscapeUtil;
 
+import java.util.stream.Collectors;
+
 /**
  * 全局异常处理器
  * 
@@ -28,6 +33,16 @@ import com.healthmanager.common.utils.html.EscapeUtil;
 public class GlobalExceptionHandler
 {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public AjaxResult handleConstraintViolationException(ConstraintViolationException ex, HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        String errorMessage = ex.getConstraintViolations().stream()
+                .map(v -> v.getMessage())
+                .collect(Collectors.joining("; "));
+        log.error("请求地址'{}',参数验证失败{}", requestURI, errorMessage);
+        return AjaxResult.error(HttpStatus.BAD_REQUEST, "参数验证失败: " + errorMessage);
+    }
 
     /**
      * 权限校验异常

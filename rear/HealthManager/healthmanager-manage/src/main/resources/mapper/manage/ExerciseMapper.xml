@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.manage.mapper.ExerciseMapper">
+    
+    <resultMap type="Exercise" id="ExerciseResult">
+        <result property="exerciseId"    column="exercise_id"    />
+        <result property="exerciseName"    column="exercise_name"    />
+        <result property="description"    column="description"    />
+    </resultMap>
+
+    <sql id="selectExerciseVo">
+        select exercise_id, exercise_name, description from health_exercise
+    </sql>
+
+    <select id="selectExerciseList" parameterType="Exercise" resultMap="ExerciseResult">
+        <include refid="selectExerciseVo"/>
+        <where>  
+            <if test="exerciseName != null  and exerciseName != ''"> and exercise_name like concat('%', #{exerciseName}, '%')</if>
+            <if test="description != null  and description != ''"> and description like concat('%', #{description}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectExerciseByExerciseId" parameterType="Long" resultMap="ExerciseResult">
+        <include refid="selectExerciseVo"/>
+        where exercise_id = #{exerciseId}
+    </select>
+
+    <insert id="insertExercise" parameterType="Exercise" useGeneratedKeys="true" keyProperty="exerciseId">
+        insert into health_exercise
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="exerciseName != null and exerciseName != ''">exercise_name,</if>
+            <if test="description != null">description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="exerciseName != null and exerciseName != ''">#{exerciseName},</if>
+            <if test="description != null">#{description},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExercise" parameterType="Exercise">
+        update health_exercise
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="exerciseName != null and exerciseName != ''">exercise_name = #{exerciseName},</if>
+            <if test="description != null">description = #{description},</if>
+        </trim>
+        where exercise_id = #{exerciseId}
+    </update>
+
+    <delete id="deleteExerciseByExerciseId" parameterType="Long">
+        delete from health_exercise where exercise_id = #{exerciseId}
+    </delete>
+
+    <delete id="deleteExerciseByExerciseIds" parameterType="String">
+        delete from health_exercise where exercise_id in 
+        <foreach item="exerciseId" collection="array" open="(" separator="," close=")">
+            #{exerciseId}
+        </foreach>
+    </delete>
+
+     <!-- 查询所有锻炼项目的ID和名称 -->
+    <select id="selectAllExerciseIdsAndNames" resultType="map">
+        SELECT exercise_id, exercise_name FROM health_exercise
+    </select>
+</mapper>

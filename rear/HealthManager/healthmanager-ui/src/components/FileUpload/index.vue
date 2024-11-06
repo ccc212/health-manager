@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { getToken } from "@/utils/auth";
+import {getJwt, getToken} from "@/utils/auth";
 
 const props = defineProps({
   modelValue: [String, Object, Array],
@@ -71,7 +71,10 @@ const number = ref(0);
 const uploadList = ref([]);
 const baseUrl = import.meta.env.VITE_APP_BASE_API;
 const uploadFileUrl = ref(import.meta.env.VITE_APP_BASE_API + "/common/upload"); // 上传文件服务器地址
-const headers = ref({ Authorization: "Bearer " + getToken() });
+const headers = ref({
+  Authorization: "Bearer " + getToken(),
+  Token: getJwt()
+});
 const fileList = ref([]);
 const showTip = computed(
   () => props.isShowTip && (props.fileType || props.fileSize)

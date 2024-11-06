@@ -1,5 +1,6 @@
 package com.healthmanager.manage.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.healthmanager.common.annotation.Log;
 import com.healthmanager.common.core.controller.BaseController;
 import com.healthmanager.common.core.domain.AjaxResult;
@@ -33,7 +34,7 @@ import java.util.Map;
  */
 @Api(tags = "用户管理相关接口")
 @RestController
-@RequestMapping("/manage/healthuser")
+@RequestMapping("/manage/healthuser/info")
 public class HealthUserController extends BaseController
 {
     @Autowired
@@ -49,25 +50,24 @@ public class HealthUserController extends BaseController
     @ApiOperation(value = "用户登录", notes = "登录后会返回token，调用其他接口时需在请求头中携带该token")
     public AjaxResult login(@RequestBody UserLoginDTO userLoginDTO)
     {
-        HealthUser healthUser = new HealthUser();
-        BeanUtils.copyProperties(userLoginDTO, healthUser);
+        HealthUser healthUser = BeanUtil.copyProperties(userLoginDTO, HealthUser.class);
         HealthUser user = healthUserService.login(healthUser);
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("id", healthUser.getUserId());
+        claims.put("id", user.getUserId());
         String token = JwtUtil.createJWT(
                 jwtProperties.getSecretKey(),
                 jwtProperties.getTtl(),
                 claims
         );
 
-        UserLoginVO userLoginVO = new UserLoginVO(
-                user.getUserId(),
-                user.getUserName(),
-                user.getName(),
-                token,
-                user.getLastLoginTime()
-        );
+        UserLoginVO userLoginVO = UserLoginVO.builder()
+                .id(user.getUserId())
+                .username(user.getUserName())
+                .name(user.getName())
+                .token(token)
+                .lastLoginTime(user.getLastLoginTime())
+                .build();
 
         return success(userLoginVO);
     }
@@ -86,7 +86,6 @@ public class HealthUserController extends BaseController
     /**
      * 查询用户信息列表
      */
-    @PreAuthorize("@ss.hasPermi('manage:healthuser:list')")
     @GetMapping("/list")
     @ApiOperation(value = "获取用户信息列表")
     public TableDataInfo list(HealthUser healthUser)
@@ -96,10 +95,7 @@ public class HealthUserController extends BaseController
         return getDataTable(list);
     }
 
-    /**
-     * 导出用户信息列表
-     */
-    @PreAuthorize("@ss.hasPermi('manage:healthuser:export')")
+
     @Log(title = "用户信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ApiOperation(value = "导出用户信息列表")
@@ -113,7 +109,6 @@ public class HealthUserController extends BaseController
     /**
      * 获取用户信息详细信息
      */
-    @PreAuthorize("@ss.hasPermi('manage:healthuser:query')")
     @GetMapping(value = "/{userId}")
     @ApiOperation(value = "获取用户信息详细信息")
     public AjaxResult getInfo(@PathVariable("userId") Long userId)
@@ -124,7 +119,6 @@ public class HealthUserController extends BaseController
     /**
      * 新增用户信息
      */
-    @PreAuthorize("@ss.hasPermi('manage:healthuser:add')")
     @Log(title = "用户信息", businessType = BusinessType.INSERT)
     @PostMapping
     @ApiOperation(value = "新增用户信息（用户注册）", notes = "用户名和邮箱是唯一的")
@@ -136,7 +130,6 @@ public class HealthUserController extends BaseController
     /**
      * 修改用户信息
      */
-    @PreAuthorize("@ss.hasPermi('manage:healthuser:edit')")
     @Log(title = "用户信息", businessType = BusinessType.UPDATE)
     @PutMapping
     @ApiOperation(value = "修改用户信息")
@@ -148,7 +141,6 @@ public class HealthUserController extends BaseController
     /**
      * 删除用户信息
      */
-    @PreAuthorize("@ss.hasPermi('manage:healthuser:remove')")
     @Log(title = "用户信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{userIds}")
     @ApiOperation(value = "删除用户信息")

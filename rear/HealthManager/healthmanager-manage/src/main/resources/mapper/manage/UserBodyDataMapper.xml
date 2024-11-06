@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.manage.mapper.UserBodyDataMapper">
+    
+    <resultMap type="UserBodyData" id="UserBodyDataResult">
+        <result property="userId"    column="user_id"    />
+        <result property="age"    column="age"    />
+        <result property="height"    column="height"    />
+        <result property="weight"    column="weight"    />
+        <result property="gender"    column="gender"    />
+    </resultMap>
+
+    <sql id="selectUserBodyDataVo">
+        select user_id, age, height, weight, gender from health_user_body_data
+    </sql>
+
+    <select id="selectUserBodyDataList" parameterType="UserBodyData" resultMap="UserBodyDataResult">
+        <include refid="selectUserBodyDataVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="age != null "> and age = #{age}</if>
+            <if test="height != null "> and height = #{height}</if>
+            <if test="weight != null "> and weight = #{weight}</if>
+            <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserBodyDataByUserId" parameterType="Long" resultMap="UserBodyDataResult">
+        <include refid="selectUserBodyDataVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insertUserBodyData" parameterType="UserBodyData">
+        insert into health_user_body_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="age != null">age,</if>
+            <if test="height != null">height,</if>
+            <if test="weight != null">weight,</if>
+            <if test="gender != null">gender,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="age != null">#{age},</if>
+            <if test="height != null">#{height},</if>
+            <if test="weight != null">#{weight},</if>
+            <if test="gender != null">#{gender},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserBodyData" parameterType="UserBodyData">
+        update health_user_body_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="age != null">age = #{age},</if>
+            <if test="height != null">height = #{height},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="gender != null">gender = #{gender},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteUserBodyDataByUserId" parameterType="Long">
+        delete from health_user_body_data where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteUserBodyDataByUserIds" parameterType="String">
+        delete from health_user_body_data where user_id in 
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+</mapper>

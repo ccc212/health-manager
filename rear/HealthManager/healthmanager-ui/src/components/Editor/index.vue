@@ -29,14 +29,15 @@
 <script setup>
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
-import { getToken } from "@/utils/auth";
+import {getJwt, getToken} from "@/utils/auth";
 
 const { proxy } = getCurrentInstance();
 
 const quillEditorRef = ref();
 const uploadUrl = ref(import.meta.env.VITE_APP_BASE_API + "/common/upload"); // 上传的图片服务器地址
 const headers = ref({
-  Authorization: "Bearer " + getToken()
+  Authorization: "Bearer " + getToken(),
+  Token: getJwt()
 });
 
 const props = defineProps({

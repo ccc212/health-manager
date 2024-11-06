@@ -1,5 +1,6 @@
 package com.healthmanager.manage.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -9,7 +10,6 @@ import com.healthmanager.manage.domain.HealthUser;
 import com.healthmanager.manage.domain.dto.UserRegisterDTO;
 import com.healthmanager.manage.mapper.HealthUserMapper;
 import com.healthmanager.manage.service.IHealthUserService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -101,11 +101,9 @@ public class HealthUserServiceImpl extends ServiceImpl<HealthUserMapper, HealthU
             throw new UserException("user.email.exist", null);
         }
 
-        HealthUser user = new HealthUser();
-        BeanUtils.copyProperties(healthUser, user);
-        user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
-        user.setCreateTime(DateUtils.getNowDate());
-        return healthUserMapper.insertHealthUser(user);
+        healthUser.setPassword(DigestUtils.md5DigestAsHex(healthUser.getPassword().getBytes()));
+        healthUser.setCreateTime(DateUtils.getNowDate());
+        return healthUserMapper.insertHealthUser(healthUser);
     }
 
     /**
@@ -147,7 +145,7 @@ public class HealthUserServiceImpl extends ServiceImpl<HealthUserMapper, HealthU
 
     @Override
     public void register(UserRegisterDTO userRegisterDTO) {
-        String username = userRegisterDTO.getUserName();
+        String username = userRegisterDTO.getUsername();
         HealthUser existUser = lambdaQuery().eq(HealthUser::getUserName, username).one();
         if (existUser != null) {
             throw new UserException("user.username.exist", null);
@@ -159,8 +157,7 @@ public class HealthUserServiceImpl extends ServiceImpl<HealthUserMapper, HealthU
             throw new UserException("user.email.exist", null);
         }
 
-        HealthUser user = new HealthUser();
-        BeanUtils.copyProperties(userRegisterDTO, user);
+        HealthUser user = BeanUtil.copyProperties(userRegisterDTO, HealthUser.class);
         user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
         user.setCreateTime(DateUtils.getNowDate());
         user.setCreateTime(DateUtils.getNowDate());

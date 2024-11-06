@@ -25,7 +25,7 @@ public class HealthUser extends BaseEntity
 
     /** 用户账号 */
     @Excel(name = "用户账号")
-    private String userName;
+    private String username;
 
     /** 用户邮箱 */
     @Excel(name = "用户邮箱")
@@ -41,10 +41,6 @@ public class HealthUser extends BaseEntity
     /** 手机号码 */
     @Excel(name = "手机号码")
     private String phoneNumber;
-
-    /** 性别（0男 1女 2未知） */
-    @Excel(name = "性别", readConverterExp = "0=男,1=女,2=未知")
-    private String gender;
 
     /** 出生日期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -64,21 +60,6 @@ public class HealthUser extends BaseEntity
     @Excel(name = "上次登录时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date lastLoginTime;
 
-    @TableField(exist = false)
-    private String searchValue;
-
-    @TableField(exist = false)
-    private String createBy;
-
-    @TableField(exist = false)
-    private String updateBy;
-
-    @TableField(exist = false)
-    private String remark;
-
-    @TableField(exist = false)
-    private String params;
-
     public void setUserId(Long userId)
     {
         this.userId = userId;
@@ -88,14 +69,14 @@ public class HealthUser extends BaseEntity
     {
         return userId;
     }
-    public void setUserName(String userName)
+    public void setUserName(String username)
     {
-        this.userName = userName;
+        this.username = username;
     }
 
     public String getUserName()
     {
-        return userName;
+        return username;
     }
     public void setEmail(String email)
     {
@@ -133,15 +114,7 @@ public class HealthUser extends BaseEntity
     {
         return phoneNumber;
     }
-    public void setGender(String gender)
-    {
-        this.gender = gender;
-    }
 
-    public String getGender()
-    {
-        return gender;
-    }
     public void setBirthDate(Date birthDate)
     {
         this.birthDate = birthDate;
@@ -183,12 +156,11 @@ public class HealthUser extends BaseEntity
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
                 .append("userId", getUserId())
-                .append("userName", getUserName())
+                .append("username", getUserName())
                 .append("email", getEmail())
                 .append("password", getPassword())
                 .append("name", getName())
                 .append("phoneNumber", getPhoneNumber())
-                .append("gender", getGender())
                 .append("birthDate", getBirthDate())
                 .append("avatar", getAvatar())
                 .append("status", getStatus())

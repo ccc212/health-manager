@@ -1,7 +1,12 @@
 package com.healthmanager.web.controller.system;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import com.healthmanager.common.utils.JwtUtil;
+import com.healthmanager.framework.config.properties.JwtProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +39,9 @@ public class SysLoginController
     @Autowired
     private SysPermissionService permissionService;
 
+    @Autowired
+    private JwtProperties jwtProperties;
+
     /**
      * 登录方法
      * 
@@ -45,9 +53,18 @@ public class SysLoginController
     {
         AjaxResult ajax = AjaxResult.success();
         // 生成令牌
-        String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
+        String authorization = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
                 loginBody.getUuid());
-        ajax.put(Constants.TOKEN, token);
+        ajax.put(Constants.TOKEN, authorization);
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", 1);
+        String jwt = JwtUtil.createJWT(
+                jwtProperties.getSecretKey(),
+                jwtProperties.getTtl(),
+                claims
+        );
+        ajax.put(Constants.JWT, jwt);
         return ajax;
     }
 

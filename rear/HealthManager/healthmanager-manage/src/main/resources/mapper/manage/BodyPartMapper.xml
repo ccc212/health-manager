@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.manage.mapper.BodyPartMapper">
+    
+    <resultMap type="BodyPart" id="BodyPartResult">
+        <result property="partId"    column="part_id"    />
+        <result property="partName"    column="part_name"    />
+    </resultMap>
+
+    <sql id="selectBodyPartVo">
+        select part_id, part_name from health_body_part
+    </sql>
+
+    <select id="selectBodyPartList" parameterType="BodyPart" resultMap="BodyPartResult">
+        <include refid="selectBodyPartVo"/>
+        <where>  
+            <if test="partId != null "> and part_id = #{partId}</if>
+            <if test="partName != null  and partName != ''"> and part_name like concat('%', #{partName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectBodyPartByPartId" parameterType="Long" resultMap="BodyPartResult">
+        <include refid="selectBodyPartVo"/>
+        where part_id = #{partId}
+    </select>
+
+    <insert id="insertBodyPart" parameterType="BodyPart" useGeneratedKeys="true" keyProperty="partId">
+        insert into health_body_part
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="partName != null and partName != ''">part_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="partName != null and partName != ''">#{partName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBodyPart" parameterType="BodyPart">
+        update health_body_part
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="partName != null and partName != ''">part_name = #{partName},</if>
+        </trim>
+        where part_id = #{partId}
+    </update>
+
+    <delete id="deleteBodyPartByPartId" parameterType="Long">
+        delete from health_body_part where part_id = #{partId}
+    </delete>
+
+    <delete id="deleteBodyPartByPartIds" parameterType="String">
+        delete from health_body_part where part_id in 
+        <foreach item="partId" collection="array" open="(" separator="," close=")">
+            #{partId}
+        </foreach>
+    </delete>
+</mapper>

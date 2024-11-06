@@ -52,7 +52,7 @@ public class ResourcesConfig implements WebMvcConfigurer
         registry.addInterceptor(repeatSubmitInterceptor).addPathPatterns("/**");
         registry.addInterceptor(jwtTokenAdminInterceptor)
                 .addPathPatterns("/manage/**")
-                .excludePathPatterns("/manage/healthuser/**");
+                .excludePathPatterns("/manage/healthuser/info/login", "/manage/healthuser/info/register", "/manage/zhipu/**");
     }
 
     /**
