@@ -8,8 +8,12 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class JwtUtil {
+    // 使用ConcurrentHashMap存储已失效的token
+    private static final ConcurrentHashMap<String, Date> invalidTokens = new ConcurrentHashMap<>();
+
     /**
      * 生成jwt
      * 使用Hs256算法, 私匙使用固定秘钥
@@ -47,6 +51,11 @@ public class JwtUtil {
      * @return rs
      */
     public static Claims parseJWT(String secretKey, String token) {
+        // 检查token是否已失效
+        if (invalidTokens.containsKey(token)) {
+            throw new RuntimeException("Token已失效");
+        }
+        
         // 得到DefaultJwtParser
         return Jwts.parser()
                 // 设置签名的秘钥
@@ -55,4 +64,16 @@ public class JwtUtil {
                 .parseClaimsJws(token).getBody();
     }
 
+    /**
+     * 使token失效
+     * @param token 要失效的token
+     */
+    public static void invalidateToken(String token) {
+        invalidTokens.put(token, new Date());
+        
+        // 清理过期的失效token记录
+        long currentTime = System.currentTimeMillis();
+        invalidTokens.entrySet().removeIf(entry -> 
+            (currentTime - entry.getValue().getTime()) > 24 * 60 * 60 * 1000); // 24小时后清理
+    }
 }

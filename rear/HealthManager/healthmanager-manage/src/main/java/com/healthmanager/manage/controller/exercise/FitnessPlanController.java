@@ -1,4 +1,4 @@
-package com.healthmanager.manage.controller;
+package com.healthmanager.manage.controller.exercise;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -1,4 +1,4 @@
-package com.healthmanager.manage.controller;
+package com.healthmanager.manage.controller.user;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.healthmanager.common.annotation.Log;
@@ -12,6 +12,7 @@ import com.healthmanager.framework.config.properties.JwtProperties;
 import com.healthmanager.manage.domain.HealthUser;
 import com.healthmanager.manage.domain.dto.UserLoginDTO;
 import com.healthmanager.manage.domain.dto.UserRegisterDTO;
+import com.healthmanager.manage.domain.vo.UserInfoVO;
 import com.healthmanager.manage.domain.vo.UserLoginVO;
 import com.healthmanager.manage.service.IHealthUserService;
 import io.swagger.annotations.Api;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +36,7 @@ import java.util.Map;
  */
 @Api(tags = "用户管理相关接口")
 @RestController
-@RequestMapping("/manage/healthuser/info")
+@RequestMapping("/manage/healthuser/user")
 public class HealthUserController extends BaseController
 {
     @Autowired
@@ -84,6 +86,18 @@ public class HealthUserController extends BaseController
     }
 
     /**
+     * 登出
+     */
+    @PostMapping("/logout")
+    @ApiOperation(value = "用户登出")
+    public AjaxResult logout(HttpServletRequest request)
+    {
+        String token = request.getHeader("token");
+        JwtUtil.invalidateToken(token);
+        return success();
+    }
+
+    /**
      * 查询用户信息列表
      */
     @GetMapping("/list")
@@ -95,7 +109,6 @@ public class HealthUserController extends BaseController
         return getDataTable(list);
     }
 
-
     @Log(title = "用户信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ApiOperation(value = "导出用户信息列表")
@@ -106,10 +119,28 @@ public class HealthUserController extends BaseController
         util.exportExcel(response, list, "用户信息数据");
     }
 
+    @GetMapping("/getInfo/{userId}")
+    @ApiOperation(value = "获取用户信息详细信息（非若依）")
+    public AjaxResult get(@PathVariable("userId") Long userId)
+    {
+        HealthUser healthUser = healthUserService.selectHealthUserByUserId(userId);
+        UserInfoVO userInfoVO = UserInfoVO.builder()
+                .email(healthUser.getEmail())
+                .name(healthUser.getName())
+                .phoneNumber(healthUser.getPhoneNumber())
+                .birthDate(healthUser.getBirthDate())
+                .avatar(healthUser.getAvatar())
+                .status(healthUser.getStatus())
+                .createTime(healthUser.getCreateTime())
+                .username(healthUser.getUserName())
+                .build();
+        return success(userInfoVO);
+    }
+
     /**
      * 获取用户信息详细信息
      */
-    @GetMapping(value = "/{userId}")
+    @GetMapping("/{userId}")
     @ApiOperation(value = "获取用户信息详细信息")
     public AjaxResult getInfo(@PathVariable("userId") Long userId)
     {

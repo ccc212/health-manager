@@ -1,9 +1,13 @@
+create database if not exists health_manager;
+
+use health_manager;
+
 -- 用户管理模块
 drop table if exists health_user;
 create table health_user
 (
     user_id         bigint(20)   not null auto_increment comment '用户ID',
-    username       varchar(30)  not null comment '用户账号',
+    username        varchar(30)  not null comment '用户账号',
     email           varchar(50)  not null comment '用户邮箱',
     password        varchar(100) not null comment '密码',
     name            varchar(30)  null comment '用户昵称',
@@ -21,8 +25,8 @@ create table health_user
   auto_increment = 100 comment = '用户信息表';
 
 INSERT INTO health_user (user_id, username, email, password, name, phone_number, birth_date, create_time)
-VALUES
-    (1, 'ccc212account', 'ccc212@ccc212.cn', '745da0d242bb1c2817b1f7957e32e5f0', 'ccc212', '13000000000', '2024-11-06', NOW());
+VALUES (1, 'ccc212account', 'ccc212@ccc212.cn', '745da0d242bb1c2817b1f7957e32e5f0', 'ccc212', '13000000000',
+        '2024-11-06', NOW());
 
 create table health_user_body_data
 (
@@ -35,8 +39,8 @@ create table health_user_body_data
     foreign key (user_id) references health_user (user_id) on delete cascade
 ) engine = innodb comment = '用户身体数据表';
 
-INSERT INTO health_user_body_data (user_id, age, height, weight, gender) VALUES
-(1, 20, 175.00, 65.00, '0');
+INSERT INTO health_user_body_data (user_id, age, height, weight, gender)
+VALUES (1, 20, 175.00, 65.00, '0');
 
 -- 健身管理模块
 drop table if exists health_fitness_plan;
@@ -55,8 +59,8 @@ create table health_fitness_plan
 ) engine = innodb
   auto_increment = 100 comment = '健身计划表';
 
-INSERT INTO health_fitness_plan (user_id, goals, initial_status, progress, create_time) VALUES
-(1, '增肌和减脂','体脂率较高，肌肉量不足',0, NOW());
+INSERT INTO health_fitness_plan (user_id, goals, initial_status, progress, create_time)
+VALUES (1, '增肌和减脂', '体脂率较高，肌肉量不足', 0, NOW());
 
 drop table if exists health_exercise;
 create table health_exercise
@@ -366,80 +370,157 @@ create table health_fitness_record
 ) engine = innodb
   auto_increment = 100 comment = '健身记录表';
 
-# -- 心理咨询模块
-# drop table if exists health_psychology_test;
-# create table health_psychology_test
+-- 心理咨询模块
+drop table if exists health_psychology_question;
+create table health_psychology_question
+(
+    question_id   bigint(20)   not null auto_increment comment '问题ID',
+    question_text varchar(500) not null comment '问题内容',
+    create_time   datetime     default current_timestamp comment '创建时间',
+    update_time   datetime comment '更新时间',
+    primary key (question_id)
+) engine = innodb
+  auto_increment = 100 comment = '心理测试题目表';
+
+INSERT INTO health_psychology_question (question_id, question_text) VALUES 
+(1, '我因一些事而烦恼'),
+(2, '胃口不好，不大想吃东西'),
+(3, '心里觉得苦闷，难以消除'),
+(4, '总觉得自己不如别人'),
+(5, '做事时无法集中精力'),
+(6, '自觉情绪低沉'),
+(7, '做任何事情都觉得费力'),
+(8, '觉得前途没有希望'),
+(9, '觉得自己的生活是失败的'),
+(10, '感到害怕'),
+(11, '睡眠不好'),
+(12, '高兴不起来'),
+(13, '说话比往常少了'),
+(14, '感到孤单'),
+(15, '人们对我不太友好'),
+(16, '觉得生活没有意思'),
+(17, '曾哭泣过'),
+(18, '感到忧愁'),
+(19, '觉得人们不喜欢我'),
+(20, '无法继续日常工作');
+
+drop table if exists health_psychology_option;
+create table health_psychology_option
+(
+    option_id   bigint(20)   not null auto_increment comment '选项ID',
+    question_id bigint(20)   not null comment '问题ID',
+    option_text varchar(500) not null comment '选项内容',
+    score       decimal(5,2) not null comment '选项分数',
+    create_time datetime     default current_timestamp comment '创建时间',
+    update_time datetime comment '更新时间',
+    primary key (option_id),
+    foreign key (question_id) references health_psychology_question (question_id)
+) engine = innodb
+  auto_increment = 100 comment = '心理测试选项表';
+
+INSERT INTO health_psychology_option (question_id, option_text, score)
+SELECT 
+    q.question_id,
+    '最近一周内出现这种情况的日子不超过一天',
+    0.00
+FROM health_psychology_question q
+UNION ALL
+SELECT 
+    q.question_id,
+    '最近一周内曾有1-2天出现这种情况',
+    1.00
+FROM health_psychology_question q
+UNION ALL
+SELECT 
+    q.question_id,
+    '最近一周内曾有3-4天出现这种情况',
+    2.00
+FROM health_psychology_question q
+UNION ALL
+SELECT 
+    q.question_id,
+    '最近一周内曾有5-7天出现这种情况',
+    3.00
+FROM health_psychology_question q;
+
+drop table if exists health_psychology_test;
+create table health_psychology_test
+(
+    test_id     bigint(20)   not null auto_increment comment '测试ID',
+    user_id     bigint(20)   not null comment '用户ID',
+    total_score decimal(5,2) not null comment '总分',
+    ai_analysis text comment 'AI分析报告',
+    test_date   date         not null comment '测试日期',
+    create_time datetime     default current_timestamp comment '创建时间',
+    update_time datetime comment '更新时间',
+    primary key (test_id),
+    foreign key (user_id) references health_user (user_id)
+) engine = innodb
+  auto_increment = 100 comment = '心理测试记录表';
+
+# drop table if exists health_counselor;
+# create table health_counselor
 # (
-#     test_id     bigint(20) not null auto_increment comment '测试ID',
-#     user_id     bigint(20) not null comment '用户ID',
-#     answers     text comment '测试答案',
-#     result      text comment '测试结果',
-#     test_date   date       not null comment '测试日期',
-#     create_time datetime default current_timestamp comment '创建时间',
-#     update_time datetime comment '更新时间',
-#     primary key (test_id),
-#     foreign key (user_id) references health_user (user_id)
+#     counselor_id   bigint(20)   not null auto_increment comment '咨询师ID',
+#     name           varchar(30)  not null comment '咨询师姓名',
+#     title          varchar(50)  not null comment '职称',
+#     introduction   text comment '个人简介',
+#     specialization varchar(200) comment '专长领域',
+#     avatar         varchar(100) comment '头像地址',
+#     status         char(1)      default '0' comment '状态（0在职 1离职）',
+#     create_time    datetime     default current_timestamp comment '创建时间',
+#     update_time    datetime comment '更新时间',
+#     primary key (counselor_id)
 # ) engine = innodb
-#   auto_increment = 100 comment = '心理测试表';
+#   auto_increment = 100 comment = '心理咨询师表';
 #
-# drop table if exists health_psychology_appointment;
-# create table health_psychology_appointment
+# INSERT INTO health_counselor (name, title, introduction, specialization) VALUES
+# ('张医生', '高级心理咨询师', '从事心理咨询工作10年，擅长处理抑郁、焦虑等问题', '抑郁症,焦虑症,人际关系'),
+# ('李医生', '心理治疗师', '具有丰富的青少年心理辅导经验', '青少年心理,家庭关系,学习压力');
+#
+# drop table if exists health_counseling_schedule;
+# create table health_counseling_schedule
 # (
-#     appointment_id   bigint(20) not null auto_increment comment '预约ID',
-#     user_id          bigint(20) not null comment '用户ID',
-#     appointment_date date       not null comment '预约日期',
-#     appointment_time time       not null comment '预约时间',
-#     status           char(1)  default '0' comment '预约状态（0正常 1取消）',
-#     create_time      datetime default current_timestamp comment '创建时间',
-#     update_time      datetime comment '更新时间',
+#     schedule_id  bigint(20) not null auto_increment comment '时段ID',
+#     counselor_id bigint(20) not null comment '咨询师ID',
+#     date         date       not null comment '日期',
+#     time_slot    time       not null comment '时间段',
+#     status       char(1)    default '0' comment '状态（0可预约 1已预约 2停诊）',
+#     create_time  datetime   default current_timestamp comment '创建时间',
+#     update_time  datetime comment '更新时间',
+#     primary key (schedule_id),
+#     foreign key (counselor_id) references health_counselor (counselor_id)
+# ) engine = innodb
+#   auto_increment = 100 comment = '咨询时段表';
+#
+# drop table if exists health_counseling_appointment;
+# create table health_counseling_appointment
+# (
+#     appointment_id bigint(20) not null auto_increment comment '预约ID',
+#     user_id       bigint(20) not null comment '用户ID',
+#     counselor_id  bigint(20) not null comment '咨询师ID',
+#     schedule_id   bigint(20) not null comment '时段ID',
+#     topic         varchar(200) comment '咨询主题',
+#     status        char(1)    default '0' comment '预约状态（0待确认 1已确认 2已完成 3已取消）',
+#     create_time   datetime   default current_timestamp comment '创建时间',
+#     update_time   datetime comment '更新时间',
 #     primary key (appointment_id),
-#     foreign key (user_id) references health_user (user_id)
+#     foreign key (user_id) references health_user (user_id),
+#     foreign key (counselor_id) references health_counselor (counselor_id),
+#     foreign key (schedule_id) references health_counseling_schedule (schedule_id)
 # ) engine = innodb
-#   auto_increment = 100 comment = '心理咨询预约表';
-#
-# -- 医疗服务模块
-# drop table if exists health_medical_advice;
-# create table health_medical_advice
-# (
-#     advice_id   bigint(20) not null auto_increment comment '建议ID',
-#     user_id     bigint(20) not null comment '用户ID',
-#     health_data text comment '健康数据',
-#     advice      text comment '医疗建议',
-#     advice_date date       not null comment '建议日期',
-#     create_time datetime default current_timestamp comment '创建时间',
-#     update_time datetime comment '更新时间',
-#     primary key (advice_id),
-#     foreign key (user_id) references health_user (user_id)
-# ) engine = innodb
-#   auto_increment = 100 comment = '医疗建议表';
-#
-# drop table if exists health_medical_appointment;
-# create table health_medical_appointment
-# (
-#     appointment_id   bigint(20) not null auto_increment comment '预约ID',
-#     user_id          bigint(20) not null comment '用户ID',
-#     doctor_id        bigint(20) comment '医生ID',
-#     appointment_date date       not null comment '预约日期',
-#     status           char(1)  default '0' comment '预约状态（0正常 1取��）',
-#     create_time      datetime default current_timestamp comment '创建时间',
-#     update_time      datetime comment '更新时间',
-#     primary key (appointment_id),
-#     foreign key (user_id) references health_user (user_id)
-# ) engine = innodb
-#   auto_increment = 100 comment = '医疗预约表';
-#
-# -- 通知系统模块
-# drop table if exists health_notification;
-# create table health_notification
-# (
-#     notification_id bigint(20)  not null auto_increment comment '通知ID',
-#     user_id         bigint(20)  not null comment '用户ID',
-#     type            varchar(50) not null comment '通知类型',
-#     content         text comment '通知内容',
-#     send_date       date        not null comment '发送日期',
-#     create_time     datetime default current_timestamp comment '创建时间',
-#     update_time     datetime comment '更新时间',
-#     primary key (notification_id),
-#     foreign key (user_id) references health_user (user_id)
-# ) engine = innodb
-#   auto_increment = 100 comment = '通知表';
+#   auto_increment = 100 comment = '咨询预约表';
+
+drop table if exists health_psychology_ai_counseling;
+create table health_psychology_ai_counseling
+(
+    record_id    bigint(20) not null auto_increment comment '记录ID',
+    user_id      bigint(20) not null comment '用户ID',
+    question     text       not null comment '用户问题',
+    answer       text       comment 'AI回答',
+    create_time  datetime   default current_timestamp comment '创建时间',
+    update_time  datetime comment '更新时间',
+    primary key (record_id),
+    foreign key (user_id) references health_user (user_id)
+) engine = innodb
+  auto_increment = 100 comment = 'AI咨询记录表';

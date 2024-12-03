@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.manage.mapper.PsychologyAiCounselingMapper">
+    
+    <resultMap type="PsychologyAiCounseling" id="PsychologyAiCounselingResult">
+        <result property="recordId"    column="record_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="question"    column="question"    />
+        <result property="answer"    column="answer"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectPsychologyAiCounselingVo">
+        select record_id, user_id, question, answer, create_time, update_time from health_psychology_ai_counseling
+    </sql>
+
+    <select id="selectPsychologyAiCounselingList" parameterType="PsychologyAiCounseling" resultMap="PsychologyAiCounselingResult">
+        <include refid="selectPsychologyAiCounselingVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="question != null  and question != ''"> and question = #{question}</if>
+            <if test="answer != null  and answer != ''"> and answer = #{answer}</if>
+        </where>
+    </select>
+    
+    <select id="selectPsychologyAiCounselingByRecordId" parameterType="Long" resultMap="PsychologyAiCounselingResult">
+        <include refid="selectPsychologyAiCounselingVo"/>
+        where record_id = #{recordId}
+    </select>
+
+    <insert id="insertPsychologyAiCounseling" parameterType="PsychologyAiCounseling" useGeneratedKeys="true" keyProperty="recordId">
+        insert into health_psychology_ai_counseling
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="question != null and question != ''">question,</if>
+            <if test="answer != null and answer != ''">answer,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="question != null and question != ''">#{question},</if>
+            <if test="answer != null and answer != ''">#{answer},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePsychologyAiCounseling" parameterType="PsychologyAiCounseling">
+        update health_psychology_ai_counseling
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="question != null and question != ''">question = #{question},</if>
+            <if test="answer != null and answer != ''">answer = #{answer},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deletePsychologyAiCounselingByRecordId" parameterType="Long">
+        delete from health_psychology_ai_counseling where record_id = #{recordId}
+    </delete>
+
+    <delete id="deletePsychologyAiCounselingByRecordIds" parameterType="String">
+        delete from health_psychology_ai_counseling where record_id in 
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+</mapper>

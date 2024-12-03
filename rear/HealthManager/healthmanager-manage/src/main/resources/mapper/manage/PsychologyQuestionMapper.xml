@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.manage.mapper.PsychologyQuestionMapper">
+    
+    <resultMap type="PsychologyQuestion" id="PsychologyQuestionResult">
+        <result property="questionId"    column="question_id"    />
+        <result property="questionText"    column="question_text"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectPsychologyQuestionVo">
+        select question_id, question_text, create_time, update_time from health_psychology_question
+    </sql>
+
+    <select id="selectPsychologyQuestionList" parameterType="PsychologyQuestion" resultMap="PsychologyQuestionResult">
+        <include refid="selectPsychologyQuestionVo"/>
+        <where>  
+            <if test="questionText != null  and questionText != ''"> and question_text = #{questionText}</if>
+        </where>
+    </select>
+    
+    <select id="selectPsychologyQuestionByQuestionId" parameterType="Long" resultMap="PsychologyQuestionResult">
+        <include refid="selectPsychologyQuestionVo"/>
+        where question_id = #{questionId}
+    </select>
+
+    <insert id="insertPsychologyQuestion" parameterType="PsychologyQuestion" useGeneratedKeys="true" keyProperty="questionId">
+        insert into health_psychology_question
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="questionText != null and questionText != ''">question_text,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="questionText != null and questionText != ''">#{questionText},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePsychologyQuestion" parameterType="PsychologyQuestion">
+        update health_psychology_question
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="questionText != null and questionText != ''">question_text = #{questionText},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where question_id = #{questionId}
+    </update>
+
+    <delete id="deletePsychologyQuestionByQuestionId" parameterType="Long">
+        delete from health_psychology_question where question_id = #{questionId}
+    </delete>
+
+    <delete id="deletePsychologyQuestionByQuestionIds" parameterType="String">
+        delete from health_psychology_question where question_id in 
+        <foreach item="questionId" collection="array" open="(" separator="," close=")">
+            #{questionId}
+        </foreach>
+    </delete>
+</mapper>

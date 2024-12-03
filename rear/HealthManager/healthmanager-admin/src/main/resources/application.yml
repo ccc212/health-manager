@@ -85,8 +85,12 @@ spring:
         max-idle: 8
         # 连接池的最大数据库连接数
         max-active: 8
-        # #连接池最大阻塞等待时间（使用负值表示没有限制）
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
         max-wait: -1ms
+  # 日期格式化
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
 
 # token配置
 token:
@@ -140,6 +144,6 @@ xss:
 # 智谱大模型
 zhipu:
   # 智谱api key
-  apiKey: 
+  apiKey: 8710347809e24058ab108ff27ea984b5.PKSvTJedQ6GGbQWk
   # 模型
   model: glm-4-flash

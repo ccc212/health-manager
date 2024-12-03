@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.manage.mapper.PsychologyTestMapper">
+    
+    <resultMap type="PsychologyTest" id="PsychologyTestResult">
+        <result property="testId"    column="test_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="totalScore"    column="total_score"    />
+        <result property="aiAnalysis"    column="ai_analysis"    />
+        <result property="testDate"    column="test_date"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectPsychologyTestVo">
+        select test_id, user_id, total_score, ai_analysis, test_date, create_time, update_time from health_psychology_test
+    </sql>
+
+    <select id="selectPsychologyTestList" parameterType="PsychologyTest" resultMap="PsychologyTestResult">
+        <include refid="selectPsychologyTestVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="totalScore != null "> and total_score = #{totalScore}</if>
+            <if test="aiAnalysis != null  and aiAnalysis != ''"> and ai_analysis = #{aiAnalysis}</if>
+            <if test="testDate != null "> and test_date = #{testDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectPsychologyTestByTestId" parameterType="Long" resultMap="PsychologyTestResult">
+        <include refid="selectPsychologyTestVo"/>
+        where test_id = #{testId}
+    </select>
+
+    <insert id="insertPsychologyTest" parameterType="PsychologyTest" useGeneratedKeys="true" keyProperty="testId">
+        insert into health_psychology_test
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="totalScore != null">total_score,</if>
+            <if test="aiAnalysis != null">ai_analysis,</if>
+            <if test="testDate != null">test_date,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="totalScore != null">#{totalScore},</if>
+            <if test="aiAnalysis != null">#{aiAnalysis},</if>
+            <if test="testDate != null">#{testDate},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePsychologyTest" parameterType="PsychologyTest">
+        update health_psychology_test
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="totalScore != null">total_score = #{totalScore},</if>
+            <if test="aiAnalysis != null">ai_analysis = #{aiAnalysis},</if>
+            <if test="testDate != null">test_date = #{testDate},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where test_id = #{testId}
+    </update>
+
+    <delete id="deletePsychologyTestByTestId" parameterType="Long">
+        delete from health_psychology_test where test_id = #{testId}
+    </delete>
+
+    <delete id="deletePsychologyTestByTestIds" parameterType="String">
+        delete from health_psychology_test where test_id in 
+        <foreach item="testId" collection="array" open="(" separator="," close=")">
+            #{testId}
+        </foreach>
+    </delete>
+</mapper>

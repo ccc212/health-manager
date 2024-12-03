@@ -4,7 +4,16 @@
         <template #header>
           <div class="card-header">
             <span>个人信息</span>
-            <el-button type="danger" @click="handleLogout">退出登录</el-button>
+            <div>
+              <el-button 
+                type="primary" 
+                @click="toggleEdit" 
+                style="margin-right: 10px"
+              >
+                {{ isEditing ? '取消编辑' : '编辑信息' }}
+              </el-button>
+              <el-button type="danger" @click="handleLogout">退出登录</el-button>
+            </div>
           </div>
         </template>
   
@@ -40,15 +49,15 @@
             </el-form-item>
   
             <el-form-item label="用户昵称" prop="name">
-              <el-input v-model="userInfo.name" />
+              <el-input v-model="userInfo.name" :disabled="!isEditing" />
             </el-form-item>
   
             <el-form-item label="手机号码" prop="phoneNumber">
-              <el-input v-model="userInfo.phoneNumber" />
+              <el-input v-model="userInfo.phoneNumber" :disabled="!isEditing" />
             </el-form-item>
   
             <el-form-item label="用户邮箱" prop="email">
-              <el-input v-model="userInfo.email" />
+              <el-input v-model="userInfo.email" :disabled="!isEditing" />
             </el-form-item>
   
             <el-form-item label="出生日期" prop="birthDate">
@@ -58,6 +67,7 @@
                 placeholder="选择日期"
                 format="YYYY-MM-DD"
                 value-format="YYYY-MM-DD"
+                :disabled="!isEditing"
               />
             </el-form-item>
   
@@ -75,7 +85,7 @@
               <span>{{ userInfo.createTime }}</span>
             </el-form-item>
   
-            <el-form-item>
+            <el-form-item v-if="isEditing">
               <el-button type="primary" @click="handleUpdate">保存修改</el-button>
             </el-form-item>
           </el-form>
@@ -128,14 +138,15 @@
   import { useRouter } from 'vue-router'
   import type { FormInstance } from 'element-plus'
   import defaultAvatar from '@/assets/default-avatar.jpg'
-  import axios from 'axios'
+  import api from '@/api/user'
   import { USER_URL } from '@/api/user'
-import { getItem } from '@/utils/storage'
+  import { getItem, removeItem } from '@/utils/storage'
   
   const router = useRouter()
   const formRef = ref<FormInstance>()
   const passwordFormRef = ref<FormInstance>()
   const passwordDialogVisible = ref(false)
+  const isEditing = ref(false)
   
   // 用户信息
   const userInfo = reactive({
@@ -195,29 +206,32 @@ import { getItem } from '@/utils/storage'
     ]
   }
   
+  // 切换编辑状态
+  const toggleEdit = () => {
+    if (isEditing.value) {
+      // 取消编辑时重新获取数据
+      getUserInfo()
+    }
+    isEditing.value = !isEditing.value
+  }
+  
   // 获取用户信息
   const getUserInfo = async () => {
     try {
-      // 从 localStorage 或 vuex 中获取用户 ID
-      const userId = localStorage.getItem('userId') // 或者从你的状态管理中获取
+      const userId = getItem('userId')
       if (!userId) {
-        ElMessage.error('未找到用户信息')
         return
       }
 
-      const response = await axios.get(`${USER_URL}/getInfo/${userId}`)
-      if (response.data.code === 200) {
-        const { data } = response.data
-        // 更新用户信息
-        Object.assign(userInfo, {
-          ...data,
-          // 格式化日期
-          birthDate: data.birthDate?.split(' ')[0], // 只保留日期部分
-          createTime: data.createTime
-        })
-      }
+      const response = await api.getInfo(parseInt(userId))
+      const { data } = response.data
+      Object.assign(userInfo, {
+        ...data,
+        birthDate: data.birthDate?.split('T')[0]
+      })
     } catch (error) {
-      ElMessage.error('获取用户信息失败')
+      // 错误已经被拦截器处理,这里不需要重复提示
+      console.error(error)
     }
   }
   
@@ -227,17 +241,20 @@ import { getItem } from '@/utils/storage'
     
     try {
       await formRef.value.validate()
-      const response = await axios.put(`${USER_URL}/update`, {
+      const response = await api.updateUser({
         ...userInfo,
-        birthDate: userInfo.birthDate ? `${userInfo.birthDate} 00:00:00` : null
+        userId: parseInt(getItem('userId') || '0')
       })
       
+      // 只保留成功提示
       if (response.data.code === 200) {
         ElMessage.success('更新成功')
-        getUserInfo() // 重新获取用户信息
+        isEditing.value = false
+        getUserInfo()
       }
     } catch (error) {
-      ElMessage.error('更新失败')
+      // 错误已经被拦截器处理,这里不需要重复提示
+      console.error(error)
     }
   }
   
@@ -294,24 +311,30 @@ import { getItem } from '@/utils/storage'
   
   // 退出登录
   const handleLogout = () => {
-    ElMessageBox.confirm('确定要退出登录吗？', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(async () => {
-      try {
-        const response = await fetch('/api/manage/user/logout', {
-          method: 'POST'
-        })
-        const data = await response.json()
-        if (data.code === 200) {
-          localStorage.removeItem('token')
-          router.push('/login')
-          ElMessage.success('退出成功')
+    ElMessageBox.confirm(
+        '是否确定要退出?',
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
         }
-      } catch (error) {
-        ElMessage.error('退出失败')
-      }
+    ).then(() => {
+      api.logout().then(() => {
+        ElMessage({
+          type: 'success',
+          message: '退出成功',
+        }); 
+        removeItem("token")
+        removeItem("name")
+        removeItem("lastLoginTime")
+        removeItem("userId")
+        router.push({ path: '/login' })
+      })
+    }).catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消',
+      })
     })
   }
   

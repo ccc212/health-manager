@@ -1,40 +1,80 @@
 import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
-import api from '@/api/user'
-import { getItem, setItem } from '@/utils/storage'
-import { useUserStore } from '@/stores/user';
+import Layout from '@/layout/index.vue'
+import { getItem } from '@/utils/storage'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'Empty',
-      component: () => import('@/views/Empty.vue'),
-      // component: () => import('@/views/FitnessPlan.vue'),
-      // component: () => import('@/views/FitnessRecord.vue'),
-      // component: () => import('@/views/UserInfo.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
       path: '/login',
       name: 'Login',
       component: () => import('@/views/Login.vue'),
-      meta: { hideNavbar: true }
     },
     {
-      path: '/plan',
-      component: () => import('@/views/FitnessPlan.vue'),
-      // meta: { requiresAuth: true }
+      path: '/',
+      component: Layout,
+      redirect: '/empty',
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: 'empty',
+          name: 'Empty',
+          component: () => import('@/views/Empty.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'plan',
+          name: 'Plan',
+          component: () => import('@/views/FitnessPlan.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: 'record',
+          name: 'Record',
+          component: () => import('@/views/FitnessRecord.vue'),
+          meta: { requiresAuth: true }
+        },
+      ]
     },
     {
-      path: '/record',
-      component: () => import('@/views/FitnessRecord.vue'),
-      // meta: { requiresAuth: true }
+      path: '/profile',
+      component: Layout,
+      redirect: '/profile/info',
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: 'info',
+          name: 'UserInfo',
+          component: () => import('@/views/User/UserInfo.vue'),
+          meta: { title: '个人信息' }
+        },
+        {
+          path: 'physical',
+          name: 'PhysicalData',
+          component: () => import('@/views/User/UserPhysicalData.vue'),
+          meta: { title: '身体数据' }
+        }
+      ]
     },
     {
-      path: '/userInfo',
-      component: () => import('@/views/UserInfo.vue'),
-      // meta: { requiresAuth: true }
+      path: '/psychology',
+      component: Layout,
+      redirect: '/psychology/counsel',
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: 'counsel',
+          name: 'PsychologyCounsel',
+          component: () => import('@/views/Psychology/AICounseling.vue'),
+          meta: { title: 'AI心理咨询' }
+        },
+        {
+          path: 'test',
+          name: 'PsychologyTest',
+          component: () => import('@/views/Psychology/PsychologyTest.vue'),
+          meta: { title: '心理测试' }
+        }
+      ]
     },
     {
       path: '/:catchAll(.*)',
@@ -44,11 +84,9 @@ const router = createRouter({
 })
 
 router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, next: Function) => {
-  const userStore = useUserStore();
-  const token = userStore.token || getItem('token'); // 从 store 或 localStorage 获取 token
+  const token = getItem('token');
 
   if (to.meta.requiresAuth && !token) {
-    // 如果路由需要认证且没有 token，则跳转到登录页
     next({ name: 'Login' });
   } else {
     next();

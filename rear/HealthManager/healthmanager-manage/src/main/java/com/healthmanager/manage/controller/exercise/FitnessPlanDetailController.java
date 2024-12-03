@@ -1,4 +1,4 @@
-package com.healthmanager.manage.controller;
+package com.healthmanager.manage.controller.exercise;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
