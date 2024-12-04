@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="PsychologyOption" id="PsychologyOptionResult">
         <result property="optionId"    column="option_id"    />
+        <result property="optionName"    column="option_name"    />
         <result property="questionId"    column="question_id"    />
         <result property="optionText"    column="option_text"    />
         <result property="score"    column="score"    />
@@ -14,12 +15,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectPsychologyOptionVo">
-        select option_id, question_id, option_text, score, create_time, update_time from health_psychology_option
+        select option_id, option_name, question_id, option_text, score, create_time, update_time from health_psychology_option
     </sql>
 
     <select id="selectPsychologyOptionList" parameterType="PsychologyOption" resultMap="PsychologyOptionResult">
         <include refid="selectPsychologyOptionVo"/>
-        <where>
+        <where>  
+            <if test="optionName != null  and optionName != ''"> and option_name like concat('%', #{optionName}, '%')</if>
             <if test="questionId != null "> and question_id = #{questionId}</if>
             <if test="optionText != null  and optionText != ''"> and option_text = #{optionText}</if>
             <if test="score != null "> and score = #{score}</if>
@@ -30,22 +32,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectPsychologyOptionVo"/>
         where option_id = #{optionId}
     </select>
-    <select id="selectPsychologyOptionVOList" resultType="com.healthmanager.manage.domain.vo.PsychologyOptionVO"
-            parameterType="com.healthmanager.manage.domain.PsychologyOption">
-        select o.option_id, q.question_text, o.option_text, o.score, o.create_time, o.update_time
-        from health_psychology_option o
-        left join health_psychology_question q
-        on o.question_id = q.question_id
-        <where>
-            <if test="questionId != null "> and o.question_id = #{questionId}</if>
-            <if test="optionText != null  and optionText != ''"> and o.option_text = #{optionText}</if>
-            <if test="score != null "> and o.score = #{score}</if>
-        </where>
-    </select>
 
     <insert id="insertPsychologyOption" parameterType="PsychologyOption" useGeneratedKeys="true" keyProperty="optionId">
         insert into health_psychology_option
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="optionName != null and optionName != ''">option_name,</if>
             <if test="questionId != null">question_id,</if>
             <if test="optionText != null and optionText != ''">option_text,</if>
             <if test="score != null">score,</if>
@@ -53,6 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="optionName != null and optionName != ''">#{optionName},</if>
             <if test="questionId != null">#{questionId},</if>
             <if test="optionText != null and optionText != ''">#{optionText},</if>
             <if test="score != null">#{score},</if>
@@ -64,6 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updatePsychologyOption" parameterType="PsychologyOption">
         update health_psychology_option
         <trim prefix="SET" suffixOverrides=",">
+            <if test="optionName != null and optionName != ''">option_name = #{optionName},</if>
             <if test="questionId != null">question_id = #{questionId},</if>
             <if test="optionText != null and optionText != ''">option_text = #{optionText},</if>
             <if test="score != null">score = #{score},</if>

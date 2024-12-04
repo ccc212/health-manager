@@ -3,6 +3,8 @@ package com.healthmanager.manage.controller.psychology;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.healthmanager.manage.domain.dto.PsychologyTestSubmitDTO;
+import com.healthmanager.manage.service.IPsychologyQuestionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,6 +39,8 @@ public class PsychologyTestController extends BaseController
 {
     @Autowired
     private IPsychologyTestService psychologyTestService;
+    @Autowired
+    private IPsychologyQuestionService psychologyQuestionService;
 
     /**
      * 查询心理测试记录列表
@@ -104,5 +108,19 @@ public class PsychologyTestController extends BaseController
     public AjaxResult remove(@PathVariable Long[] testIds)
     {
         return toAjax(psychologyTestService.deletePsychologyTestByTestIds(testIds));
+    }
+
+    @ApiOperation(value = "开始心理测试")
+    @GetMapping("/start")
+    public AjaxResult startTest() {
+        // 返回所有题目及其选项
+        return success(psychologyQuestionService.getQuestionsWithOptions());
+    }
+
+    @ApiOperation(value = "提交心理测试答案")
+    @PostMapping("/submit")
+    public AjaxResult submitTest(@RequestBody PsychologyTestSubmitDTO submitDTO) {
+        // 计算得分并生成分析报告
+        return success(psychologyTestService.calculateAndSaveResult(submitDTO));
     }
 }

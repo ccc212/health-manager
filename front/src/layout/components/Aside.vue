@@ -31,6 +31,35 @@
           <el-icon><DocumentChecked /></el-icon>
           <span>心理测试</span>
         </el-menu-item>
+        <el-menu-item index="/psychology/records">
+          <el-icon><DocumentChecked /></el-icon>
+          <span>测试记录</span>
+        </el-menu-item>
+      </el-menu>
+    </template>
+    
+    <template v-if="isExerciseRoute">
+      <el-menu
+        :default-active="activeMenu"
+        class="profile-menu"
+        @select="handleSelect"
+      >
+        <el-menu-item index="/exercise/plan">
+          <el-icon><Calendar /></el-icon>
+          <span>健身计划</span>
+        </el-menu-item>
+        <el-menu-item index="/exercise/record">
+          <el-icon><Memo /></el-icon>
+          <span>锻炼记录</span>
+        </el-menu-item>
+        <el-menu-item index="/exercise/library">
+          <el-icon><List /></el-icon>
+          <span>锻炼项目库</span>
+        </el-menu-item>
+        <el-menu-item index="/exercise/bodypart">
+          <el-icon><Guide /></el-icon>
+          <span>部位训练指南</span>
+        </el-menu-item>
       </el-menu>
     </template>
   </div>
@@ -39,7 +68,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { User, DataLine, ChatLineRound, DocumentChecked } from '@element-plus/icons-vue'
+import { User, DataLine, ChatLineRound, DocumentChecked, Calendar, Memo, List, Guide } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -51,6 +80,8 @@ const isProfileRoute = computed(() => {
 const isPsychologyRoute = computed(() => {
   return route.path.startsWith('/psychology')
 })
+
+const isExerciseRoute = computed(() => route.path.startsWith('/exercise'))
 
 const activeMenu = computed(() => route.path)
 

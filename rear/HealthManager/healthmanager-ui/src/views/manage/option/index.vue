@@ -1,20 +1,28 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="选项标识" prop="optionName">
+        <el-input
+            v-model="queryParams.optionName"
+            placeholder="请输入选项标识"
+            clearable
+            @keyup.enter="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="问题ID" prop="questionId">
         <el-input
-          v-model="queryParams.questionId"
-          placeholder="请输入问题ID"
-          clearable
-          @keyup.enter="handleQuery"
+            v-model="queryParams.questionId"
+            placeholder="请输入问题ID"
+            clearable
+            @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="选项分数" prop="score">
         <el-input
-          v-model="queryParams.score"
-          placeholder="请输入选项分数"
-          clearable
-          @keyup.enter="handleQuery"
+            v-model="queryParams.score"
+            placeholder="请输入选项分数"
+            clearable
+            @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item>
@@ -26,40 +34,40 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
-          plain
-          icon="Plus"
-          @click="handleAdd"
-          v-hasPermi="['manage:option:add']"
+            type="primary"
+            plain
+            icon="Plus"
+            @click="handleAdd"
+            v-hasPermi="['manage:option:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
-          plain
-          icon="Edit"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['manage:option:edit']"
+            type="success"
+            plain
+            icon="Edit"
+            :disabled="single"
+            @click="handleUpdate"
+            v-hasPermi="['manage:option:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['manage:option:remove']"
+            type="danger"
+            plain
+            icon="Delete"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['manage:option:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="warning"
-          plain
-          icon="Download"
-          @click="handleExport"
-          v-hasPermi="['manage:option:export']"
+            type="warning"
+            plain
+            icon="Download"
+            @click="handleExport"
+            v-hasPermi="['manage:option:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
@@ -68,6 +76,7 @@
     <el-table v-loading="loading" :data="optionList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="选项ID" align="center" prop="optionId" />
+      <el-table-column label="选项标识" align="center" prop="optionName" />
       <el-table-column label="问题ID" align="center" prop="questionId" />
       <el-table-column label="选项内容" align="center" prop="optionText" />
       <el-table-column label="选项分数" align="center" prop="score" />
@@ -78,18 +87,21 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
-      :total="total"
-      v-model:page="queryParams.pageNum"
-      v-model:limit="queryParams.pageSize"
-      @pagination="getList"
+        v-show="total>0"
+        :total="total"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        @pagination="getList"
     />
 
     <!-- 添加或修改心理测试选项对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="optionRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="选项标识" prop="optionName">
+          <el-input v-model="form.optionName" placeholder="请输入选项标识" />
+        </el-form-item>
         <el-form-item label="问题ID" prop="questionId">
           <el-input v-model="form.questionId" placeholder="请输入问题ID" />
         </el-form-item>
@@ -130,11 +142,15 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
+    optionName: null,
     questionId: null,
     optionText: null,
     score: null,
   },
   rules: {
+    optionName: [
+      { required: true, message: "选项标识不能为空", trigger: "blur" }
+    ],
     questionId: [
       { required: true, message: "问题ID不能为空", trigger: "blur" }
     ],
@@ -169,6 +185,7 @@ function cancel() {
 function reset() {
   form.value = {
     optionId: null,
+    optionName: null,
     questionId: null,
     optionText: null,
     score: null,

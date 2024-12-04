@@ -19,21 +19,8 @@ const router = createRouter({
         {
           path: 'empty',
           name: 'Empty',
-          component: () => import('@/views/Empty.vue'),
-          meta: { requiresAuth: true }
-        },
-        {
-          path: 'plan',
-          name: 'Plan',
-          component: () => import('@/views/FitnessPlan.vue'),
-          meta: { requiresAuth: true }
-        },
-        {
-          path: 'record',
-          name: 'Record',
-          component: () => import('@/views/FitnessRecord.vue'),
-          meta: { requiresAuth: true }
-        },
+          component: () => import('@/views/Empty.vue')
+        }
       ]
     },
     {
@@ -73,6 +60,44 @@ const router = createRouter({
           name: 'PsychologyTest',
           component: () => import('@/views/Psychology/PsychologyTest.vue'),
           meta: { title: '心理测试' }
+        },
+        {
+          path: 'records',
+          name: 'PsychologyTestRecords',
+          component: () => import('@/views/Psychology/PsychologyTestRecords.vue'),
+          meta: { title: '测试记录' }
+        }
+      ]
+    },
+    {
+      path: '/exercise',
+      component: Layout,
+      redirect: '/exercise/library',
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: 'plan',
+          name: 'FitnessPlan',
+          component: () => import('@/views/Exercise/UnderDevelopment.vue'),
+          meta: { title: '健身计划' }
+        },
+        {
+          path: 'record',
+          name: 'FitnessRecord',
+          component: () => import('@/views/Exercise/UnderDevelopment.vue'),
+          meta: { title: '锻炼记录' }
+        },
+        {
+          path: 'library',
+          name: 'ExerciseLibrary',
+          component: () => import('@/views/Exercise/ExerciseLibrary.vue'),
+          meta: { title: '锻炼项目库' }
+        },
+        {
+          path: 'bodypart',
+          name: 'BodyPartGuide',
+          component: () => import('@/views/Exercise/UnderDevelopment.vue'),
+          meta: { title: '部位训练指南' }
         }
       ]
     },

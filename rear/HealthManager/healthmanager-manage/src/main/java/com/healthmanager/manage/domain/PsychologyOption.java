@@ -10,14 +10,19 @@ import com.healthmanager.common.core.domain.BaseEntity;
  * 心理测试选项对象 health_psychology_option
  * 
  * @author ccc212
- * @date 2024-11-21
+ * @date 2024-12-03
  */
 public class PsychologyOption extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** 选项ID */
+    @Excel(name = "选项ID")
     private Long optionId;
+
+    /** 选项标识 */
+    @Excel(name = "选项标识")
+    private String optionName;
 
     /** 问题ID */
     @Excel(name = "问题ID")
@@ -39,6 +44,15 @@ public class PsychologyOption extends BaseEntity
     public Long getOptionId() 
     {
         return optionId;
+    }
+    public void setOptionName(String optionName) 
+    {
+        this.optionName = optionName;
+    }
+
+    public String getOptionName() 
+    {
+        return optionName;
     }
     public void setQuestionId(Long questionId) 
     {
@@ -72,6 +86,7 @@ public class PsychologyOption extends BaseEntity
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("optionId", getOptionId())
+            .append("optionName", getOptionName())
             .append("questionId", getQuestionId())
             .append("optionText", getOptionText())
             .append("score", getScore())

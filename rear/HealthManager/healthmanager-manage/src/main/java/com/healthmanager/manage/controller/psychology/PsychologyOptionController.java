@@ -3,7 +3,8 @@ package com.healthmanager.manage.controller.psychology;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
-import com.healthmanager.manage.domain.vo.PsychologyOptionVO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,14 +23,12 @@ import com.healthmanager.manage.domain.PsychologyOption;
 import com.healthmanager.manage.service.IPsychologyOptionService;
 import com.healthmanager.common.utils.poi.ExcelUtil;
 import com.healthmanager.common.core.page.TableDataInfo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 
 /**
  * 心理测试选项Controller
  * 
  * @author ccc212
- * @date 2024-11-21
+ * @date 2024-12-03
  */
 @Api(tags = "心理测试选项相关接口")
 @RestController
@@ -47,7 +46,7 @@ public class PsychologyOptionController extends BaseController
     public TableDataInfo list(PsychologyOption psychologyOption)
     {
         startPage();
-        List<PsychologyOptionVO> list = psychologyOptionService.selectPsychologyOptionVOList(psychologyOption);
+        List<PsychologyOption> list = psychologyOptionService.selectPsychologyOptionList(psychologyOption);
         return getDataTable(list);
     }
 
@@ -100,8 +99,8 @@ public class PsychologyOptionController extends BaseController
      * 删除心理测试选项
      */
     @Log(title = "心理测试选项", businessType = BusinessType.DELETE)
-	@ApiOperation("删除心理测试选项")
-	@DeleteMapping("/{optionIds}")
+    @ApiOperation("删除心理测试选项")
+    @DeleteMapping("/{optionIds}")
     public AjaxResult remove(@PathVariable Long[] optionIds)
     {
         return toAjax(psychologyOptionService.deletePsychologyOptionByOptionIds(optionIds));

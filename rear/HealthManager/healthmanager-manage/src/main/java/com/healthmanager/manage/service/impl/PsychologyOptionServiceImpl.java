@@ -2,7 +2,6 @@ package com.healthmanager.manage.service.impl;
 
 import java.util.List;
 import com.healthmanager.common.utils.DateUtils;
-import com.healthmanager.manage.domain.vo.PsychologyOptionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.healthmanager.manage.mapper.PsychologyOptionMapper;
@@ -13,7 +12,7 @@ import com.healthmanager.manage.service.IPsychologyOptionService;
  * 心理测试选项Service业务层处理
  * 
  * @author ccc212
- * @date 2024-11-21
+ * @date 2024-12-03
  */
 @Service
 public class PsychologyOptionServiceImpl implements IPsychologyOptionService 
@@ -93,10 +92,5 @@ public class PsychologyOptionServiceImpl implements IPsychologyOptionService
     public int deletePsychologyOptionByOptionId(Long optionId)
     {
         return psychologyOptionMapper.deletePsychologyOptionByOptionId(optionId);
-    }
-
-    @Override
-    public List<PsychologyOptionVO> selectPsychologyOptionVOList(PsychologyOption psychologyOption) {
-        return psychologyOptionMapper.selectPsychologyOptionVOList(psychologyOption);
     }
 }

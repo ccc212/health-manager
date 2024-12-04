@@ -2,6 +2,7 @@ package com.healthmanager.manage.service;
 
 import java.util.List;
 import com.healthmanager.manage.domain.PsychologyQuestion;
+import com.healthmanager.manage.domain.vo.PsychologyQuestionVO;
 
 /**
  * 心理测试题目Service接口
@@ -58,4 +59,6 @@ public interface IPsychologyQuestionService
      * @return 结果
      */
     public int deletePsychologyQuestionByQuestionId(Long questionId);
+
+    List<PsychologyQuestionVO> getQuestionsWithOptions();
 }

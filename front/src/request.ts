@@ -16,9 +16,9 @@ service.interceptors.request.use(
     if (token) {  
       config.headers['token'] = token
     }
-    
-    console.log('Request Headers:', config.headers)
-    
+    else {
+      router.push('/login')
+    }
     return config
   },
   error => {

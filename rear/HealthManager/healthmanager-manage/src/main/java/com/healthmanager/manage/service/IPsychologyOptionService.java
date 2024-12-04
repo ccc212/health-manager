@@ -2,13 +2,12 @@ package com.healthmanager.manage.service;
 
 import java.util.List;
 import com.healthmanager.manage.domain.PsychologyOption;
-import com.healthmanager.manage.domain.vo.PsychologyOptionVO;
 
 /**
  * 心理测试选项Service接口
  * 
  * @author ccc212
- * @date 2024-11-21
+ * @date 2024-12-03
  */
 public interface IPsychologyOptionService 
 {
@@ -59,6 +58,4 @@ public interface IPsychologyOptionService
      * @return 结果
      */
     public int deletePsychologyOptionByOptionId(Long optionId);
-
-    List<PsychologyOptionVO> selectPsychologyOptionVOList(PsychologyOption psychologyOption);
 }

@@ -2,6 +2,8 @@ package com.healthmanager.manage.service;
 
 import java.util.List;
 import com.healthmanager.manage.domain.PsychologyTest;
+import com.healthmanager.manage.domain.dto.PsychologyTestSubmitDTO;
+import com.healthmanager.manage.domain.vo.PsychologyTestResultVO;
 
 /**
  * 心理测试记录Service接口
@@ -58,4 +60,6 @@ public interface IPsychologyTestService
      * @return 结果
      */
     public int deletePsychologyTestByTestId(Long testId);
+
+    PsychologyTestResultVO calculateAndSaveResult(PsychologyTestSubmitDTO submitDTO);
 }

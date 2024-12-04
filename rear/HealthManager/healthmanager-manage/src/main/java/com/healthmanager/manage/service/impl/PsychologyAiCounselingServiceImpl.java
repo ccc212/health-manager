@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.healthmanager.manage.mapper.PsychologyAiCounselingMapper;
 import com.healthmanager.manage.domain.PsychologyAiCounseling;
 import com.healthmanager.manage.service.IPsychologyAiCounselingService;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
  * AI咨询记录Service业务层处理
@@ -100,10 +101,38 @@ public class PsychologyAiCounselingServiceImpl implements IPsychologyAiCounselin
 
     @Override
     public String getPsychologyCounselingAnswer(PsychologyAiQueryDTO psychologyAiQueryDTO) {
-        PsychologyAiCounseling psychologyAiCounseling = BeanUtil.copyProperties(psychologyAiQueryDTO, PsychologyAiCounseling.class);
-        String answer = ZhipuModelUtil.callZhipuModel(ZhipuModelUtil.buildPsychologyCounseling(psychologyAiQueryDTO.getQuestion()));
+        // 获取用户之前的对话历史
+        PsychologyAiCounseling queryParam = new PsychologyAiCounseling();
+        queryParam.setUserId(psychologyAiQueryDTO.getUserId());
+        List<PsychologyAiCounseling> historyList = selectPsychologyAiCounselingList(queryParam);
+        
+        // 构建上下文对话内容
+        StringBuilder contextBuilder = new StringBuilder();
+        contextBuilder.append("以下是之前的对话历史：\n\n");
+        
+        // 添加历史对话记录
+        for (PsychologyAiCounseling history : historyList) {
+            contextBuilder.append("用户：").append(history.getQuestion()).append("\n");
+            contextBuilder.append("AI：").append(history.getAnswer()).append("\n\n");
+        }
+        
+        // 添加当前问题
+        contextBuilder.append("用户：").append(psychologyAiQueryDTO.getQuestion()).append("\n");
+        contextBuilder.append("请基于以上对话历史，回答用户的最新问题。回答要保持连贯性和上下文关联性。\n");
+        
+        // 调用AI模型获取回答
+        String answer = ZhipuModelUtil.callZhipuModel(
+            ZhipuModelUtil.buildPsychologyCounseling(contextBuilder.toString())
+        );
+        
+        // 保存新的对话记录
+        PsychologyAiCounseling psychologyAiCounseling = BeanUtil.copyProperties(
+            psychologyAiQueryDTO, 
+            PsychologyAiCounseling.class
+        );
         psychologyAiCounseling.setAnswer(answer);
         insertPsychologyAiCounseling(psychologyAiCounseling);
+        
         return answer;
     }
 }

@@ -2,15 +2,17 @@ package com.healthmanager.manage.mapper;
 
 import java.util.List;
 import com.healthmanager.manage.domain.PsychologyOption;
-import com.healthmanager.manage.domain.vo.PsychologyOptionVO;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * 心理测试选项Mapper接口
  * 
  * @author ccc212
- * @date 2024-11-21
+ * @date 2024-12-03
  */
-public interface PsychologyOptionMapper 
+public interface PsychologyOptionMapper
 {
     /**
      * 查询心理测试选项
@@ -60,5 +62,9 @@ public interface PsychologyOptionMapper
      */
     public int deletePsychologyOptionByOptionIds(Long[] optionIds);
 
-    List<PsychologyOptionVO> selectPsychologyOptionVOList(PsychologyOption psychologyOption);
+    @Select("select * from health_psychology_option where question_id = #{questionId}")
+    List<PsychologyOption> selectOptionsByQuestionId(Long questionId);
+
+    @Select("select * from health_psychology_option where question_id = #{questionId} and option_name = #{optionName}")
+    PsychologyOption selectOptionByQuestionIdAndName(@Param("questionId") Long questionId, @Param("optionName") String optionName);
 }

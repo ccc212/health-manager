@@ -105,8 +105,8 @@ token:
 jwt:
   # 密钥
   secret-key: healthmanager
-  # 令牌有效期（默认30分钟）
-  ttl: 1800000
+  # 令牌有效期（默认60分钟）
+  ttl: 3600000
   # token名
   token-name: token
 
