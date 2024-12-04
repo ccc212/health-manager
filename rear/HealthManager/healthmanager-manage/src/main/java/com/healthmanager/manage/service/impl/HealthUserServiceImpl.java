@@ -161,6 +161,10 @@ public class HealthUserServiceImpl extends ServiceImpl<HealthUserMapper, HealthU
         user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
         user.setCreateTime(DateUtils.getNowDate());
         user.setCreateTime(DateUtils.getNowDate());
+
+        if (user.getName() == null) {
+            user.setName(username);
+        }
         save(user);
     }
 }

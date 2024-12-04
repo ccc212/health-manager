@@ -38,10 +38,6 @@
             </div>
           </template>
           <div class="card-content">
-            <div class="exercise-info">
-              <p><strong>难度：</strong>{{ getDifficultyLabel(exercise.difficulty) }}</p>
-              <p><strong>消耗热量：</strong>{{ exercise.calories }} 千卡/小时</p>
-            </div>
             <div class="exercise-description">
               {{ exercise.description }}
             </div>
@@ -62,17 +58,12 @@
           <h4>锻炼部位</h4>
           <p>{{ getPartName(currentExercise.partId) }}</p>
           
-          <h4>难度等级</h4>
-          <p>{{ getDifficultyLabel(currentExercise.difficulty) }}</p>
-          
-          <h4>消耗热量</h4>
-          <p>{{ currentExercise.calories }} 千卡/小时</p>
-          
           <h4>动作描述</h4>
           <p>{{ currentExercise.description }}</p>
           
           <h4>注意事项</h4>
-          <p>{{ currentExercise.precautions }}</p>
+          <!-- <p>{{ currentExercise.precautions }}</p> -->
+          <p>无</p>
         </div>
       </el-dialog>
     </div>
@@ -126,12 +117,6 @@
     return part?.partName || '未知部位'
   }
   
-  // 获取难度标签
-  const getDifficultyLabel = (difficulty: number) => {
-    const labels = ['初级', '中级', '高级']
-    return labels[difficulty - 1] || '未知'
-  }
-  
   // 查询按钮点击事件
   const handleQuery = () => {
     getExerciseList()
@@ -180,10 +165,6 @@
       }
   
       .card-content {
-        .exercise-info {
-          margin-bottom: 10px;
-        }
-  
         .exercise-description {
           margin-bottom: 15px;
           color: #666;

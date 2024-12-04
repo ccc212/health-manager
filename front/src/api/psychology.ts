@@ -1,6 +1,7 @@
 import request from '@/request'
 import type { TableDataInfo } from '@/types'
 import type {ApiResponse, Question, TestResult} from "@/type";
+import { getItem } from '@/utils/storage';
 
 const BASE_URL = '/manage'
 const COUNSELING_URL = BASE_URL + '/counseling'
@@ -46,6 +47,6 @@ export default {
 
   // 获取测试记录列表
   getTestRecords: () => {
-    return request.get(`${TEST_URL}/list`)
+    return request.get(`${TEST_URL}/list`, { params: { userId: getItem('userId') } })
   }
 }

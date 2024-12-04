@@ -9,7 +9,11 @@
       </template>
       
       <el-table :data="testRecords" style="width: 100%">
-        <el-table-column prop="testDate" label="测试日期" width="180" />
+        <el-table-column prop="testDate" label="测试日期" width="180">
+          <template #default="scope">
+            {{ dayjs(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss') }}
+          </template>
+        </el-table-column>
         <el-table-column prop="totalScore" label="得分" width="100">
           <template #default="scope">
             {{ scope.row.totalScore.toFixed(2) }}
@@ -47,7 +51,7 @@
     >
       <div v-if="currentRecord" class="test-details">
         <div class="detail-item">
-          <h3>测试日期：{{ currentRecord.testDate }}</h3>
+          <h3>测试日期：{{ dayjs(currentRecord.createTime).format('YYYY-MM-DD HH:mm:ss') }}</h3>
           <h3>总分：{{ currentRecord.totalScore.toFixed(2) }}</h3>
         </div>
         <div class="analysis" v-html="formattedAnalysis"></div>
@@ -66,12 +70,14 @@ import {ref, computed, onMounted} from 'vue'
 import { ElMessage } from 'element-plus'
 import psychology from '@/api/psychology'
 import MarkdownIt from 'markdown-it'
+import dayjs from 'dayjs'
 
 const md = new MarkdownIt()
 
 interface TestRecord {
   testId: number
   testDate: string
+  createTime: string
   totalScore: number
   aiAnalysis: string
 }

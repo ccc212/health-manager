@@ -45,6 +45,7 @@ public class ExerciseController extends BaseController
     public TableDataInfo list(Exercise exercise)
     {
         startPage();
+//        List<ExerciseShowVO> list = exerciseService.selectExerciseShowList(exercise);
         List<Exercise> list = exerciseService.selectExerciseList(exercise);
         return getDataTable(list);
     }

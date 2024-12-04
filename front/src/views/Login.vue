@@ -6,12 +6,12 @@
         <h2 class="login-title">用户登录</h2>
         <el-form :model="loginForm" :rules="loginRules" ref="loginFormRef">
           <el-form-item prop="username">
-            <el-input v-model="loginForm.username" placeholder="用户名">
+            <el-input v-model="loginForm.username" placeholder="用户名" @keyup.enter="handleEnterKey">
               <template #prefix><el-icon><User /></el-icon></template>
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input v-model="loginForm.password" type="password" placeholder="密码">
+            <el-input v-model="loginForm.password" type="password" placeholder="密码" @keyup.enter="handleEnterKey">
               <template #prefix><el-icon><Lock /></el-icon></template>
             </el-input>
           </el-form-item>
@@ -31,12 +31,12 @@
         <h2 class="login-title">用户注册</h2>
         <el-form :model="regForm" :rules="loginRules" ref="regFormRef">
           <el-form-item prop="username">
-            <el-input v-model="regForm.username" placeholder="用户名">
+            <el-input v-model="regForm.username" placeholder="用户名" @keyup.enter="handleEnterKey">
               <template #prefix><el-icon><User /></el-icon></template>
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input v-model="regForm.password" type="password" placeholder="密码">
+            <el-input v-model="regForm.password" type="password" placeholder="密码" @keyup.enter="handleEnterKey">
               <template #prefix><el-icon><Lock /></el-icon></template>
             </el-input>
           </el-form-item>
@@ -59,10 +59,10 @@ import { ElMessage } from 'element-plus'
 import { User, Lock } from '@element-plus/icons-vue'
 import api from '@/api/user'
 import { setItem } from '@/utils/storage'
-// import '@/styles/login.scss'
 
 const router = useRouter()
 const loginFormRef = ref()
+const regFormRef = ref()
 const loading = ref(false)
 
 const loginForm = reactive({
@@ -146,6 +146,15 @@ const handleRegister = () => {
       loading.value = false
     }
   })
+}
+
+// 添加 Enter 键处理函数
+const handleEnterKey = () => {
+  if (showLogin.value) {
+    handleLogin()
+  } else {
+    handleRegister()
+  }
 }
 </script>
 

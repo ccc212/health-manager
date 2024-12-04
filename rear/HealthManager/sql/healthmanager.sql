@@ -2,45 +2,45 @@ create database if not exists health_manager;
 
 use health_manager;
 
--- 用户管理模块
-drop table if exists health_user;
-create table health_user
-(
-    user_id         bigint(20)   not null auto_increment comment '用户ID',
-    username        varchar(30)  not null comment '用户账号',
-    email           varchar(50)  not null comment '用户邮箱',
-    password        varchar(100) not null comment '密码',
-    name            varchar(30)  null comment '用户昵称',
-    phone_number    varchar(15)  default null comment '手机号码',
-    birth_date      date         default null comment '出生日期',
-    avatar          varchar(100) default null comment '头像地址',
-    status          char(1)      default '0' comment '账号状态（0正常 1停用）',
-    last_login_time datetime comment '上次登录时间',
-    create_time     datetime     default current_timestamp comment '创建时间',
-    update_time     datetime comment '更新时间',
-    primary key (user_id),
-    unique key (email),
-    unique key (username)
-) engine = innodb
-  auto_increment = 100 comment = '用户信息表';
-
-INSERT INTO health_user (user_id, username, email, password, name, phone_number, birth_date, create_time)
-VALUES (1, 'ccc212account', 'ccc212@ccc212.cn', '745da0d242bb1c2817b1f7957e32e5f0', 'ccc212', '13000000000',
-        '2024-11-06', NOW());
-
-create table health_user_body_data
-(
-    user_id bigint(20)       not null comment '用户ID',
-    age     tinyint unsigned not null comment '年龄',
-    height  decimal(5, 2)    not null comment '身高',
-    weight  decimal(5, 2)    not null comment '体重',
-    gender  char(1) default '2' comment '性别（0男 1女 2未知）',
-    primary key (user_id),
-    foreign key (user_id) references health_user (user_id) on delete cascade
-) engine = innodb comment = '用户身体数据表';
-
-INSERT INTO health_user_body_data (user_id, age, height, weight, gender)
-VALUES (1, 20, 175.00, 65.00, '0');
+# -- 用户管理模块
+# drop table if exists health_user;
+# create table health_user
+# (
+#     user_id         bigint(20)   not null auto_increment comment '用户ID',
+#     username        varchar(30)  not null comment '用户账号',
+#     email           varchar(50)  comment '用户邮箱',
+#     password        varchar(100) not null comment '密码',
+#     name            varchar(30)  null comment '用户昵称',
+#     phone_number    varchar(15)  default null comment '手机号码',
+#     birth_date      date         default null comment '出生日期',
+#     avatar          varchar(100) default null comment '头像地址',
+#     status          char(1)      default '0' comment '账号状态（0正常 1停用）',
+#     last_login_time datetime comment '上次登录时间',
+#     create_time     datetime     default current_timestamp comment '创建时间',
+#     update_time     datetime comment '更新时间',
+#     primary key (user_id),
+#     unique key (email),
+#     unique key (username)
+# ) engine = innodb
+#   auto_increment = 100 comment = '用户信息表';
+#
+# INSERT INTO health_user (user_id, username, email, password, name, phone_number, birth_date, create_time)
+# VALUES (1, 'ccc212account', 'ccc212@ccc212.cn', '745da0d242bb1c2817b1f7957e32e5f0', 'ccc212', '13000000000',
+#         '2024-11-06', NOW());
+#
+# create table health_user_body_data
+# (
+#     user_id bigint(20)       not null comment '用户ID',
+#     age     tinyint unsigned not null comment '年龄',
+#     height  decimal(5, 2)    not null comment '身高',
+#     weight  decimal(5, 2)    not null comment '体重',
+#     gender  char(1) default '2' comment '性别（0男 1女 2未知）',
+#     primary key (user_id),
+#     foreign key (user_id) references health_user (user_id) on delete cascade
+# ) engine = innodb comment = '用户身体数据表';
+#
+# INSERT INTO health_user_body_data (user_id, age, height, weight, gender)
+# VALUES (1, 20, 175.00, 65.00, '0');
 
 -- 健身管理模块
 drop table if exists health_fitness_plan;
@@ -408,6 +408,7 @@ drop table if exists health_psychology_option;
 create table health_psychology_option
 (
     option_id   bigint(20)   not null auto_increment comment '选项ID',
+    option_name varchar(10)  not null comment '选项标识',
     question_id bigint(20)   not null comment '问题ID',
     option_text varchar(500) not null comment '选项内容',
     score       decimal(5,2) not null comment '选项分数',
@@ -418,27 +419,31 @@ create table health_psychology_option
 ) engine = innodb
   auto_increment = 100 comment = '心理测试选项表';
 
-INSERT INTO health_psychology_option (question_id, option_text, score)
+INSERT INTO health_psychology_option (question_id, option_name, option_text, score)
 SELECT 
     q.question_id,
+    'A',
     '最近一周内出现这种情况的日子不超过一天',
     0.00
 FROM health_psychology_question q
 UNION ALL
 SELECT 
     q.question_id,
+    'B',
     '最近一周内曾有1-2天出现这种情况',
     1.00
 FROM health_psychology_question q
 UNION ALL
 SELECT 
     q.question_id,
+    'C',
     '最近一周内曾有3-4天出现这种情况',
     2.00
 FROM health_psychology_question q
 UNION ALL
 SELECT 
     q.question_id,
+    'D',
     '最近一周内曾有5-7天出现这种情况',
     3.00
 FROM health_psychology_question q;
