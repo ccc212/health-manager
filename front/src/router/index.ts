@@ -90,7 +90,7 @@ const router = createRouter({
         {
           path: 'record',
           name: 'FitnessRecord',
-          component: () => import('@/views/UnderDevelopment.vue'),
+          component: () => import('@/views/Exercise/FitnessRecord.vue'),
           meta: { title: '锻炼记录' }
         },
         // {
@@ -104,14 +104,20 @@ const router = createRouter({
     {
       path: '/medical',
       component: Layout,
-      redirect: '/medical/record',
+      redirect: '/medical/appointment',
       meta: { requiresAuth: true },
       children: [
+        {
+          path: 'appointment',
+          name: 'MedicalAppointment',
+          component: () => import('@/views/Medical/MedicalAppointment.vue'),
+          meta: { title: '预约挂号' }
+        },
         {
           path: 'record',
           name: 'MedicalRecord',
           component: () => import('@/views/UnderDevelopment.vue'),
-          meta: { title: '医疗记录' }
+          meta: { title: '就诊记录' }
         }
       ]
     },

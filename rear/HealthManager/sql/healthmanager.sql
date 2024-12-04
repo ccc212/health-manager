@@ -105,9 +105,9 @@ VALUES (1, '俯卧撑', '主要锻炼胸大肌、三角肌前束和肱三头肌�
        (30, '腿弯举', '使用腿弯举机进行的练习，主要锻炼腘绳肌，增强腿部后侧肌肉力量。'),
        (31, '腿屈伸', '使用腿屈伸机进行的练习，主要锻炼股四头肌，增强腿部前侧肌肉力量。'),
        (32, '小腿提踵', '使用提踵机进行的练习，主要锻炼腓肠肌，增强小腿肌肉力量。'),
-       (33, '坐姿提踵', '在坐姿下进行的提踵练习，主要锻炼比目鱼肌，增强小腿肌肉力量。'),
+       (33, '坐姿提踵', '在坐姿下进行的提踵练习，��要锻炼比目鱼肌，增强小腿肌肉力量。'),
        (34, '杠铃弯举', '使用杠铃进行的弯举练习，主要锻炼肱二头肌，增强上臂前侧肌肉力量。'),
-       (35, '窄距卧推', '使用杠铃进行的窄距卧推练习，主要锻炼肱三头肌，增强上臂后侧肌肉力量。'),
+       (35, '窄距卧推', '使用杠铃进行的窄距卧��练习，主要锻炼肱三头肌，增强上臂后侧肌肉力量。'),
        (36, '锤式弯举', '使用哑铃进行的锤式弯举练习，主要锻炼肱肌和肱二头肌，增强上臂肌肉力量。'),
        (37, '腕弯举', '使用哑铃进行的腕弯举练习，主要锻炼前臂肌肉，增强前臂力量。'),
        (38, '仰卧卷腹', '通过卷曲上半身来锻炼上腹肌，增强腹部肌肉力量。'),
@@ -277,7 +277,7 @@ VALUES
 (23, 3),  -- 下胸
 (23, 5),  -- 肩前束
 
--- 蝴蝶机夹胸
+-- 蝴蝶机��胸
 (24, 4),  -- 胸中缝
 (24, 2),  -- 中胸
 
@@ -403,7 +403,7 @@ INSERT INTO health_psychology_question (question_id, question_text) VALUES
 (17, '曾哭泣过'),
 (18, '感到忧愁'),
 (19, '觉得人们不喜欢我'),
-(20, '无法继续日常工作');
+(20, '无��继续日常工作');
 
 drop table if exists health_psychology_option;
 create table health_psychology_option
@@ -464,59 +464,6 @@ create table health_psychology_test
 ) engine = innodb
   auto_increment = 100 comment = '心理测试记录表';
 
-# drop table if exists health_counselor;
-# create table health_counselor
-# (
-#     counselor_id   bigint(20)   not null auto_increment comment '咨询师ID',
-#     name           varchar(30)  not null comment '咨询师姓名',
-#     title          varchar(50)  not null comment '职称',
-#     introduction   text comment '个人简介',
-#     specialization varchar(200) comment '专长领域',
-#     avatar         varchar(100) comment '头像地址',
-#     status         char(1)      default '0' comment '状态（0在职 1离职）',
-#     create_time    datetime     default current_timestamp comment '创建时间',
-#     update_time    datetime comment '更新时间',
-#     primary key (counselor_id)
-# ) engine = innodb
-#   auto_increment = 100 comment = '心理咨询师表';
-#
-# INSERT INTO health_counselor (name, title, introduction, specialization) VALUES
-# ('张医生', '高级心理咨询师', '从事心理咨询工作10年，擅长处理抑郁、焦虑等问题', '抑郁症,焦虑症,人际关系'),
-# ('李医生', '心理治疗师', '具有丰富的青少年心理辅导经验', '青少年心理,家庭关系,学习压力');
-#
-# drop table if exists health_counseling_schedule;
-# create table health_counseling_schedule
-# (
-#     schedule_id  bigint(20) not null auto_increment comment '时段ID',
-#     counselor_id bigint(20) not null comment '咨询师ID',
-#     date         date       not null comment '日期',
-#     time_slot    time       not null comment '时间段',
-#     status       char(1)    default '0' comment '状态（0可预约 1已预约 2停诊）',
-#     create_time  datetime   default current_timestamp comment '创建时间',
-#     update_time  datetime comment '更新时间',
-#     primary key (schedule_id),
-#     foreign key (counselor_id) references health_counselor (counselor_id)
-# ) engine = innodb
-#   auto_increment = 100 comment = '咨询时段表';
-#
-# drop table if exists health_counseling_appointment;
-# create table health_counseling_appointment
-# (
-#     appointment_id bigint(20) not null auto_increment comment '预约ID',
-#     user_id       bigint(20) not null comment '用户ID',
-#     counselor_id  bigint(20) not null comment '咨询师ID',
-#     schedule_id   bigint(20) not null comment '时段ID',
-#     topic         varchar(200) comment '咨询主题',
-#     status        char(1)    default '0' comment '预约状态（0待确认 1已确认 2已完成 3已取消）',
-#     create_time   datetime   default current_timestamp comment '创建时间',
-#     update_time   datetime comment '更新时间',
-#     primary key (appointment_id),
-#     foreign key (user_id) references health_user (user_id),
-#     foreign key (counselor_id) references health_counselor (counselor_id),
-#     foreign key (schedule_id) references health_counseling_schedule (schedule_id)
-# ) engine = innodb
-#   auto_increment = 100 comment = '咨询预约表';
-
 drop table if exists health_psychology_ai_counseling;
 create table health_psychology_ai_counseling
 (
@@ -530,3 +477,54 @@ create table health_psychology_ai_counseling
     foreign key (user_id) references health_user (user_id)
 ) engine = innodb
   auto_increment = 100 comment = 'AI咨询记录表';
+
+-- 医疗模块
+drop table if exists health_doctor;
+create table health_doctor (
+    doctor_id     bigint(20)   not null auto_increment comment '医生ID',
+    name          varchar(30)  not null comment '医生姓名',
+    title         varchar(50)  not null comment '职称',
+    department    varchar(50)  not null comment '科室',
+    introduction  text comment '个人简介',
+    -- avatar        varchar(100) comment '头像地址',
+    status        char(1)      default '0' comment '状态（0在职 1离职）',
+    create_time   datetime     default current_timestamp comment '创建时间',
+    update_time   datetime comment '更新时间',
+    primary key (doctor_id)
+) engine = innodb auto_increment = 100 comment = '医生信息表';
+
+-- 插入示例数据
+INSERT INTO health_doctor (name, title, department, introduction) VALUES 
+('王医生', '主任医师', '内科', '从事内科临床工作20年，擅长治疗各种常见内科疾病'),
+('李医生', '副主任医师', '外科', '具有丰富的外科手术经验，专注于微创手术'),
+('张医生', '主治医师', '骨科', '专注于运动损伤和骨科疾病的诊治');
+
+drop table if exists health_doctor_schedule;
+create table health_doctor_schedule (
+    schedule_id  bigint(20) not null auto_increment comment '排班ID',
+    doctor_id    bigint(20) not null comment '医生ID',
+    date         date       not null comment '日期',
+    period       char(1)    not null comment '时段（1上午 2下午 3晚上）',
+    quota        int        not null comment '剩余名额',
+    status       char(1)    default '0' comment '状态（0可预约 1约满 2停诊）',
+    create_time  datetime   default current_timestamp comment '创建时间',
+    update_time  datetime comment '更新时间',
+    primary key (schedule_id),
+    foreign key (doctor_id) references health_doctor (doctor_id)
+) engine = innodb auto_increment = 100 comment = '医生排班表';
+
+drop table if exists health_medical_appointment;
+create table health_medical_appointment (
+    appointment_id bigint(20)   not null auto_increment comment '预约ID',
+    user_id       bigint(20)   not null comment '用户ID',
+    doctor_id     bigint(20)   not null comment '医生ID',
+    schedule_id   bigint(20)   not null comment '排班ID',
+    description   varchar(500) comment '病情描述',
+    status        char(1)      default '0' comment '预约状态（0待就诊 1已完成 2已取消）',
+    create_time   datetime     default current_timestamp comment '创建时间',
+    update_time   datetime comment '更新时间',
+    primary key (appointment_id),
+    foreign key (user_id) references health_user (user_id),
+    foreign key (doctor_id) references health_doctor (doctor_id),
+    foreign key (schedule_id) references health_doctor_schedule (schedule_id)
+) engine = innodb auto_increment = 100 comment = '医疗预约表';

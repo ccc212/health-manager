@@ -5,6 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.healthmanager.manage.domain.FitnessPlanDetail;
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * 健身计划详情Mapper接口
@@ -64,4 +65,7 @@ public interface FitnessPlanDetailMapper extends BaseMapper<FitnessPlanDetail>
 
     @Delete("delete from health_fitness_plan_detail where plan_id = #{planId}")
     void deleteFitnessPlanDetailByPlanId(Long planId);
+
+    @Select("select * from health_fitness_plan_detail where plan_id = #{planId}")
+    List<FitnessPlanDetail> selectFitnessPlanDetailByPlanId(Long planId);
 }

@@ -66,4 +66,8 @@ public interface IFitnessPlanService
      * @return 结果
      */
     public int deleteFitnessPlanByPlanId(Long planId);
+
+    void updatePlanProgress(Long userId);
+
+    boolean hasGeneratedPlan(Long userId);
 }

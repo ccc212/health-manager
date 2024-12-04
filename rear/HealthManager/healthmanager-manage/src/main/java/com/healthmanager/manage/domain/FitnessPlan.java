@@ -37,7 +37,7 @@ public class FitnessPlan extends BaseEntity
 
     /** 完成进度 */
     @Excel(name = "完成进度")
-    private String progress;
+    private Integer progress;
 
     public void setPlanId(Long planId) 
     {
@@ -84,12 +84,12 @@ public class FitnessPlan extends BaseEntity
     {
         return currentStatus;
     }
-    public void setProgress(String progress) 
+    public void setProgress(Integer progress)
     {
         this.progress = progress;
     }
 
-    public String getProgress() 
+    public Integer getProgress()
     {
         return progress;
     }

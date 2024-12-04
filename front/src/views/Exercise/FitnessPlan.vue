@@ -1,7 +1,18 @@
 <template>
   <div class="fitness-plan">
     <div class="action-bar">
-      <el-button type="primary" @click="createPlan">创建新计划</el-button>
+      <el-tooltip
+        :content="hasActivePlan ? '您已有进行中的计划，完成后才能创建新计划' : '创建新计划'"
+        placement="top"
+      >
+        <div style="display: inline-block">
+          <el-button 
+            type="primary" 
+            @click="createPlan"
+            :disabled="hasActivePlan"
+          >创建新计划</el-button>
+        </div>
+      </el-tooltip>
     </div>
     
     <el-table :data="planList" style="width: 100%">
@@ -227,7 +238,7 @@ const goalOptions = [
   },
   {
     label: '增强灵活性',
-    value: '通过瑜伽和拉伸训练提高身体灵活性和关节活动度。'
+    value: '通过瑜伽和拉伸训练提高身��灵活性和关节活动度。'
   },
   {
     label: '增强力量',
@@ -292,15 +303,20 @@ const fetchPlanList = async () => {
   }
 }
 
-// 创建新计划
+// 检查是否有进行中的计划
+const hasActivePlan = computed(() => {
+  return planList.value.some(plan => {
+    const progress = Number(plan.progress) || 0
+    return progress < 100 // 进度小于100%表示计划还在进行中
+  })
+})
+
+// 创建计划方法
 const createPlan = () => {
-  planForm.value = {
-    userId: getItem('userId'),
-    goals: '',
-    initialStatus: ''
+  if (hasActivePlan.value) {
+    ElMessage.warning('您已有进行中的计划，请完成当前计划后再创建新计划')
+    return
   }
-  selectedGoal.value = ''
-  selectedStatus.value = ''
   dialogVisible.value = true
 }
 
@@ -502,6 +518,10 @@ onMounted(async () => {
     margin-top: 20px;
     display: flex;
     justify-content: center;
+  }
+
+  :deep(.el-button.is-disabled) {
+    cursor: not-allowed;
   }
 }
 

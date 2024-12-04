@@ -103,7 +103,7 @@ public class FitnessPlanServiceImpl implements IFitnessPlanService {
         }
         
         // 更新计划状态
-        fitnessPlan.setProgress("0");  // 设置初始进度
+        fitnessPlan.setProgress(0);  // 设置初始进度
         fitnessPlan.setCurrentStatus(fitnessPlan.getInitialStatus());  // 设置当前状态为初始状态
         fitnessPlanMapper.updateFitnessPlan(fitnessPlan);
     }
@@ -162,6 +162,9 @@ public class FitnessPlanServiceImpl implements IFitnessPlanService {
      */
     @Override
     public int deleteFitnessPlanByPlanIds(Long[] planIds) {
+        for (Long planId : planIds) {
+            fitnessPlanDetailMapper.deleteFitnessPlanDetailByPlanId(planId);
+        }
         return fitnessPlanMapper.deleteFitnessPlanByPlanIds(planIds);
     }
 
@@ -173,6 +176,26 @@ public class FitnessPlanServiceImpl implements IFitnessPlanService {
      */
     @Override
     public int deleteFitnessPlanByPlanId(Long planId) {
+        fitnessPlanDetailMapper.deleteFitnessPlanDetailByPlanId(planId);
         return fitnessPlanMapper.deleteFitnessPlanByPlanId(planId);
+    }
+
+    @Override
+    public void updatePlanProgress(Long userId) {
+        FitnessPlan fitnessPlan = fitnessPlanMapper.selectFitnessPlanByUserId(userId);
+        Long planId = fitnessPlan.getPlanId();
+        int size = fitnessPlanDetailMapper.selectFitnessPlanDetailByPlanId(planId).size();
+        int progress = fitnessPlan.getProgress() + (100 / size);
+        progress = Math.min(progress, 100);
+        fitnessPlan.setProgress(progress);
+        fitnessPlanMapper.updateFitnessPlan(fitnessPlan);
+    }
+
+    @Override
+    public boolean hasGeneratedPlan(Long userId) {
+        FitnessPlan plan = new FitnessPlan();
+        plan.setUserId(userId);
+        List<FitnessPlan> plans = selectFitnessPlanList(plan);
+        return plans.size() > 0 && plans.get(0) != null;
     }
 }

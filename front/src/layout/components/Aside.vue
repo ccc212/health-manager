@@ -58,6 +58,23 @@
         </el-menu-item>
       </el-menu>
     </template>
+    
+    <template v-if="isMedicalRoute">
+      <el-menu
+        :default-active="activeMenu"
+        class="profile-menu"
+        @select="handleSelect"
+      >
+        <el-menu-item index="/medical/appointment">
+          <el-icon><Calendar /></el-icon>
+          <span>预约挂号</span>
+        </el-menu-item>
+        <el-menu-item index="/medical/record">
+          <el-icon><Document /></el-icon>
+          <span>就诊记录</span>
+        </el-menu-item>
+      </el-menu>
+    </template>
   </div>
 </template>
 
@@ -78,6 +95,10 @@ const isPsychologyRoute = computed(() => {
 })
 
 const isExerciseRoute = computed(() => route.path.startsWith('/exercise'))
+
+const isMedicalRoute = computed(() => {
+  return route.path.startsWith('/medical')
+})
 
 const activeMenu = computed(() => route.path)
 

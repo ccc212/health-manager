@@ -91,4 +91,17 @@ public class FitnessPlanController extends BaseController
     {
         return toAjax(fitnessPlanService.deleteFitnessPlanByPlanIds(planIds));
     }
+
+    @ApiOperation("更新健身计划进度")
+    @PutMapping("/updateProgress/{userId}")
+    public AjaxResult updateProgress(@PathVariable("userId") Long userId) {
+        fitnessPlanService.updatePlanProgress(userId);
+        return success();
+    }
+
+    @ApiOperation("检查是否有已生成的计划")
+    @GetMapping("/checkActive/{userId}")
+    public AjaxResult checkActive(@PathVariable Long userId) {
+        return success(fitnessPlanService.hasGeneratedPlan(userId));
+    }
 }
