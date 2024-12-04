@@ -76,28 +76,42 @@ const router = createRouter({
       meta: { requiresAuth: true },
       children: [
         {
-          path: 'plan',
-          name: 'FitnessPlan',
-          component: () => import('@/views/Exercise/UnderDevelopment.vue'),
-          meta: { title: '健身计划' }
-        },
-        {
-          path: 'record',
-          name: 'FitnessRecord',
-          component: () => import('@/views/Exercise/UnderDevelopment.vue'),
-          meta: { title: '锻炼记录' }
-        },
-        {
           path: 'library',
           name: 'ExerciseLibrary',
           component: () => import('@/views/Exercise/ExerciseLibrary.vue'),
           meta: { title: '锻炼项目库' }
         },
         {
-          path: 'bodypart',
-          name: 'BodyPartGuide',
-          component: () => import('@/views/Exercise/UnderDevelopment.vue'),
-          meta: { title: '部位训练指南' }
+          path: 'plan',
+          name: 'FitnessPlan',
+          component: () => import('@/views/Exercise/FitnessPlan.vue'),
+          meta: { title: '健身计划' }
+        },
+        {
+          path: 'record',
+          name: 'FitnessRecord',
+          component: () => import('@/views/UnderDevelopment.vue'),
+          meta: { title: '锻炼记录' }
+        },
+        // {
+        //   path: 'bodypart',
+        //   name: 'BodyPartGuide',
+        //   component: () => import('@/views/Exercise/BodyPartGuide.vue'),
+        //   meta: { title: '部位训练指南' }
+        // }
+      ]
+    },
+    {
+      path: '/medical',
+      component: Layout,
+      redirect: '/medical/record',
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: 'record',
+          name: 'MedicalRecord',
+          component: () => import('@/views/UnderDevelopment.vue'),
+          meta: { title: '医疗记录' }
         }
       ]
     },

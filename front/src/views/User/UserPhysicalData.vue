@@ -40,6 +40,7 @@
           <el-radio-group v-model="form.gender">
             <el-radio label="0">男</el-radio>
             <el-radio label="1">女</el-radio>
+            <el-radio label="2">未知</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="身高(cm)" prop="height">
@@ -87,7 +88,7 @@ const formRef = ref<FormInstance>()
 const physicalData = ref({
   userId: null,
   age: 0,
-  gender: '0',
+  gender: '2',
   height: 0,
   weight: 0
 })
@@ -95,7 +96,7 @@ const physicalData = ref({
 const form = ref({
   userId: null,
   age: 25,
-  gender: '0',
+  gender: '2',
   height: 170,
   weight: 60
 })

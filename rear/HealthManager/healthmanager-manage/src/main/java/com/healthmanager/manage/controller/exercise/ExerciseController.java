@@ -2,16 +2,14 @@ package com.healthmanager.manage.controller.exercise;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.healthmanager.manage.domain.dto.ExerciseSearchDTO;
+import com.healthmanager.manage.domain.vo.ExerciseShowVO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.healthmanager.common.annotation.Log;
 import com.healthmanager.common.core.controller.BaseController;
 import com.healthmanager.common.core.domain.AjaxResult;
@@ -22,6 +20,8 @@ import com.healthmanager.common.utils.poi.ExcelUtil;
 import com.healthmanager.common.core.page.TableDataInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * 锻炼项目Controller
@@ -40,12 +40,26 @@ public class ExerciseController extends BaseController
     /**
      * 查询锻炼项目列表
      */
+    @GetMapping("/getList")
+    @ApiOperation(value = "获取锻炼项目列表")
+    public AjaxResult getList(@RequestParam(defaultValue = "1") Integer pageNum,
+                              @RequestParam(defaultValue = "10") Integer pageSize,
+                              ExerciseSearchDTO exerciseSearchDTO) {
+        // 计算分页的起始位置
+        int offset = (pageNum - 1) * pageSize;
+        List<ExerciseShowVO> list = exerciseService.selectExerciseShowList(exerciseSearchDTO, offset, pageSize);
+        int total = exerciseService.countExerciseShowList(exerciseSearchDTO);
+        return AjaxResult.success(new TableDataInfo(list, total));
+    }
+
+    /**
+     * 查询锻炼项目列表
+     */
     @GetMapping("/list")
     @ApiOperation(value = "获取锻炼项目列表")
     public TableDataInfo list(Exercise exercise)
     {
         startPage();
-//        List<ExerciseShowVO> list = exerciseService.selectExerciseShowList(exercise);
         List<Exercise> list = exerciseService.selectExerciseList(exercise);
         return getDataTable(list);
     }

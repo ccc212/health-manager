@@ -3,8 +3,13 @@ package com.healthmanager.manage.mapper;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.healthmanager.manage.domain.Exercise;
+import com.healthmanager.manage.domain.dto.ExerciseSearchDTO;
+import com.healthmanager.manage.domain.vo.ExerciseShowVO;
 import org.apache.ibatis.annotations.MapKey;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 锻炼项目Mapper接口
@@ -69,4 +74,8 @@ public interface ExerciseMapper
      */
      @MapKey("exercise_id")
      public List<Map<String, Object>> selectAllExerciseIdsAndNames();
+
+    List<ExerciseShowVO> selectExerciseShowList(@Param("exerciseSearchDTO") ExerciseSearchDTO exerciseSearchDTO, @Param("offset") int offset, @Param("limit") int limit);
+
+    int countExerciseShowList(@Param("exerciseSearchDTO") ExerciseSearchDTO exerciseSearchDTO);
 }

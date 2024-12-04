@@ -230,7 +230,6 @@
         birthDate: data.birthDate?.split('T')[0]
       })
     } catch (error) {
-      // 错误已经被拦截器处理,这里不需要重复提示
       console.error(error)
     }
   }
@@ -253,7 +252,6 @@
         getUserInfo()
       }
     } catch (error) {
-      // 错误已经被拦截器处理,这里不需要重复提示
       console.error(error)
     }
   }

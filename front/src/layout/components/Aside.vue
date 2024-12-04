@@ -44,6 +44,10 @@
         class="profile-menu"
         @select="handleSelect"
       >
+        <el-menu-item index="/exercise/library">
+          <el-icon><List /></el-icon>
+          <span>锻炼项目库</span>
+        </el-menu-item>
         <el-menu-item index="/exercise/plan">
           <el-icon><Calendar /></el-icon>
           <span>健身计划</span>
@@ -51,14 +55,6 @@
         <el-menu-item index="/exercise/record">
           <el-icon><Memo /></el-icon>
           <span>锻炼记录</span>
-        </el-menu-item>
-        <el-menu-item index="/exercise/library">
-          <el-icon><List /></el-icon>
-          <span>锻炼项目库</span>
-        </el-menu-item>
-        <el-menu-item index="/exercise/bodypart">
-          <el-icon><Guide /></el-icon>
-          <span>部位训练指南</span>
         </el-menu-item>
       </el-menu>
     </template>
@@ -95,7 +91,7 @@ const handleSelect = (path: string) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: green;
+  background-color: #304156;
   width: 100%;
   height: 100%;
   padding: 20px;

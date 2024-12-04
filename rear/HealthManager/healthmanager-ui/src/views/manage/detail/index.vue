@@ -1,36 +1,44 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="计划ID" prop="planId">
         <el-input
-          v-model="queryParams.planId"
-          placeholder="请输入计划ID"
-          clearable
-          @keyup.enter="handleQuery"
+            v-model="queryParams.planId"
+            placeholder="请输入计划ID"
+            clearable
+            @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="锻炼项目ID" prop="exerciseId">
         <el-input
-          v-model="queryParams.exerciseId"
-          placeholder="请输入锻炼项目ID"
-          clearable
-          @keyup.enter="handleQuery"
+            v-model="queryParams.exerciseId"
+            placeholder="请输入锻炼项目ID"
+            clearable
+            @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="锻炼时长" prop="duration">
         <el-input
-          v-model="queryParams.duration"
-          placeholder="请输入锻炼时长"
-          clearable
-          @keyup.enter="handleQuery"
+            v-model="queryParams.duration"
+            placeholder="请输入锻炼时长"
+            clearable
+            @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="锻炼强度" prop="intensity">
         <el-input
-          v-model="queryParams.intensity"
-          placeholder="请输入锻炼强度"
-          clearable
-          @keyup.enter="handleQuery"
+            v-model="queryParams.intensity"
+            placeholder="请输入锻炼强度"
+            clearable
+            @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="锻炼频率" prop="frequency">
+        <el-input
+            v-model="queryParams.frequency"
+            placeholder="请输入锻炼频率"
+            clearable
+            @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item>
@@ -42,40 +50,40 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
-          plain
-          icon="Plus"
-          @click="handleAdd"
-          v-hasPermi="['manage:detail:add']"
+            type="primary"
+            plain
+            icon="Plus"
+            @click="handleAdd"
+            v-hasPermi="['manage:detail:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
-          plain
-          icon="Edit"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['manage:detail:edit']"
+            type="success"
+            plain
+            icon="Edit"
+            :disabled="single"
+            @click="handleUpdate"
+            v-hasPermi="['manage:detail:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['manage:detail:remove']"
+            type="danger"
+            plain
+            icon="Delete"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['manage:detail:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="warning"
-          plain
-          icon="Download"
-          @click="handleExport"
-          v-hasPermi="['manage:detail:export']"
+            type="warning"
+            plain
+            icon="Download"
+            @click="handleExport"
+            v-hasPermi="['manage:detail:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
@@ -92,6 +100,7 @@
           <dict-tag :options="excersize_intensity" :value="scope.row.intensity"/>
         </template>
       </el-table-column>
+      <el-table-column label="锻炼频率" align="center" prop="frequency" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['manage:detail:edit']">修改</el-button>
@@ -99,13 +108,13 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
-      :total="total"
-      v-model:page="queryParams.pageNum"
-      v-model:limit="queryParams.pageSize"
-      @pagination="getList"
+        v-show="total>0"
+        :total="total"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        @pagination="getList"
     />
 
     <!-- 添加或修改健身计划详情对话框 -->
@@ -122,6 +131,9 @@
         </el-form-item>
         <el-form-item label="锻炼强度" prop="intensity">
           <el-input v-model="form.intensity" placeholder="请输入锻炼强度" />
+        </el-form-item>
+        <el-form-item label="锻炼频率" prop="frequency">
+          <el-input v-model="form.frequency" placeholder="请输入锻炼频率" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -157,7 +169,8 @@ const data = reactive({
     planId: null,
     exerciseId: null,
     duration: null,
-    intensity: null
+    intensity: null,
+    frequency: null
   },
   rules: {
     planId: [
@@ -171,6 +184,9 @@ const data = reactive({
     ],
     intensity: [
       { required: true, message: "锻炼强度不能为空", trigger: "blur" }
+    ],
+    frequency: [
+      { required: true, message: "锻炼频率不能为空", trigger: "blur" }
     ]
   }
 });
@@ -200,7 +216,8 @@ function reset() {
     planId: null,
     exerciseId: null,
     duration: null,
-    intensity: null
+    intensity: null,
+    frequency: null
   };
   proxy.resetForm("detailRef");
 }

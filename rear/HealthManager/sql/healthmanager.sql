@@ -348,6 +348,7 @@ create table health_fitness_plan_detail
     exercise_id bigint(20)          not null comment '锻炼项目ID',
     duration    int                 not null comment '锻炼时长（分钟）',
     intensity   char(1) default '0' not null comment '锻炼强度（0低 1中 2高）',
+    frequency   int                 not null comment '锻炼频率（天/周）',
     primary key (detail_id),
     foreign key (plan_id) references health_fitness_plan (plan_id),
     foreign key (exercise_id) references health_exercise (exercise_id)

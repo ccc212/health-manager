@@ -30,17 +30,21 @@ export interface TestResult {
     aiAnalysis: string
 }
 
+export interface BodyPart {
+    partId: number;
+    partName: string;
+}
+
 export interface Exercise {
-    exerciseId: number
-    exerciseName: string
-    partId: number
-    difficulty: number
-    calories: number
-    description: string
-    precautions: string
-  }
-  
-  export interface BodyPart {
-    partId: number
-    partName: string
-  }
+    exerciseId: number;
+    exerciseName: string;
+    description: string;
+    bodyParts: BodyPart[];
+}
+
+export interface TableDataInfo<T> {
+  total: number;
+  rows: T[];
+  code: number;
+  msg: string | null;
+}

@@ -1,6 +1,9 @@
 package com.healthmanager.manage.service.impl;
 
 import java.util.List;
+
+import com.healthmanager.manage.domain.dto.ExerciseSearchDTO;
+import com.healthmanager.manage.domain.vo.ExerciseShowVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.healthmanager.manage.mapper.ExerciseMapper;
@@ -90,4 +93,16 @@ public class ExerciseServiceImpl implements IExerciseService
     {
         return exerciseMapper.deleteExerciseByExerciseId(exerciseId);
     }
+
+    @Override
+    public List<ExerciseShowVO> selectExerciseShowList(ExerciseSearchDTO exerciseSearchDTO, int offset, Integer limit) {
+        return exerciseMapper.selectExerciseShowList(exerciseSearchDTO, offset, limit);
+    }
+
+    @Override
+    public int countExerciseShowList(ExerciseSearchDTO exerciseSearchDTO) {
+        return exerciseMapper.countExerciseShowList(exerciseSearchDTO);
+    }
+
+
 }

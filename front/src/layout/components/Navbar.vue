@@ -35,7 +35,7 @@ const goToProfile = () => {
 
 <style lang="scss" scoped>
 .navbar {
-  background-color: red;
+  background-color: #1f2d3d;
   width: 100%;
   height: 60px;
   padding: 1rem;

@@ -21,6 +21,61 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="description != null  and description != ''"> and description like concat('%', #{description}, '%')</if>
         </where>
     </select>
+
+    <select id="selectExerciseShowList" resultMap="ExerciseShowVOResult">
+        SELECT DISTINCT 
+            e.exercise_id,
+            e.exercise_name,
+            e.description,
+            p.part_id,
+            p.part_name
+        FROM (
+            SELECT exercise_id, exercise_name, description
+            FROM health_exercise e
+            <where>
+                <if test="exerciseSearchDTO.partId != null">
+                    AND EXISTS (
+                        SELECT 1 FROM health_exercise_body_part ep 
+                        WHERE ep.exercise_id = e.exercise_id 
+                        AND ep.part_id = #{exerciseSearchDTO.partId}
+                    )
+                </if>
+                <if test="exerciseSearchDTO.exerciseName != null and exerciseSearchDTO.exerciseName != ''">
+                    AND exercise_name like concat('%', #{exerciseSearchDTO.exerciseName}, '%')
+                </if>
+            </where>
+            LIMIT #{offset}, #{limit}
+        ) e
+        LEFT JOIN health_exercise_body_part ep ON e.exercise_id = ep.exercise_id
+        LEFT JOIN health_body_part p ON ep.part_id = p.part_id
+    </select>
+
+    <select id="countExerciseShowList" resultType="int">
+        SELECT COUNT(DISTINCT e.exercise_id)
+        FROM health_exercise e
+        <where>
+            <if test="exerciseSearchDTO.partId != null">
+                AND EXISTS (
+                    SELECT 1 FROM health_exercise_body_part ep 
+                    WHERE ep.exercise_id = e.exercise_id 
+                    AND ep.part_id = #{exerciseSearchDTO.partId}
+                )
+            </if>
+            <if test="exerciseSearchDTO.exerciseName != null and exerciseSearchDTO.exerciseName != ''">
+                AND e.exercise_name like concat('%', #{exerciseSearchDTO.exerciseName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="ExerciseShowVOResult" type="com.healthmanager.manage.domain.vo.ExerciseShowVO">
+        <id property="exerciseId" column="exercise_id"/>
+        <result property="exerciseName" column="exercise_name"/>
+        <result property="description" column="description"/>
+        <collection property="bodyParts" ofType="com.healthmanager.manage.domain.BodyPart">
+            <id property="partId" column="part_id"/>
+            <result property="partName" column="part_name"/>
+        </collection>
+    </resultMap>
     
     <select id="selectExerciseByExerciseId" parameterType="Long" resultMap="ExerciseResult">
         <include refid="selectExerciseVo"/>

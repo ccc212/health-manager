@@ -4,7 +4,13 @@
       <div class="filter-section">
         <el-form :inline="true" :model="queryParams">
           <el-form-item label="锻炼部位">
-            <el-select v-model="queryParams.partId" placeholder="选择锻炼部位" clearable>
+            <el-select 
+              v-model="queryParams.partId" 
+              placeholder="选择锻炼部位" 
+              clearable
+              :value-key="'partId'"
+              class="part-select"
+            >
               <el-option
                 v-for="part in bodyParts"
                 :key="part.partId"
@@ -34,7 +40,16 @@
           <template #header>
             <div class="card-header">
               <span>{{ exercise.exerciseName }}</span>
-              <el-tag size="small">{{ getPartName(exercise.partId) }}</el-tag>
+              <div class="part-tags">
+                <el-tag 
+                  v-for="part in exercise.bodyParts" 
+                  :key="part.partId" 
+                  size="small" 
+                  class="part-tag"
+                >
+                  {{ part.partName }}
+                </el-tag>
+              </div>
             </div>
           </template>
           <div class="card-content">
@@ -56,7 +71,16 @@
       >
         <div class="exercise-detail" v-if="currentExercise">
           <h4>锻炼部位</h4>
-          <p>{{ getPartName(currentExercise.partId) }}</p>
+          <p>
+            <el-tag 
+              v-for="part in currentExercise.bodyParts" 
+              :key="part.partId" 
+              size="small" 
+              class="part-tag"
+            >
+              {{ part.partName }}
+            </el-tag>
+          </p>
           
           <h4>动作描述</h4>
           <p>{{ currentExercise.description }}</p>
@@ -66,6 +90,19 @@
           <p>无</p>
         </div>
       </el-dialog>
+  
+      <!-- 分页组件 -->
+      <div class="pagination-container">
+        <el-pagination
+          v-model:current-page="queryParams.pageNum"
+          v-model:page-size="queryParams.pageSize"
+          :total="total"
+          :page-sizes="[10, 20, 30, 50]"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
     </div>
   </template>
   
@@ -77,12 +114,15 @@
   
   // 查询参数
   const queryParams = ref({
+    pageNum: 1,
+    pageSize: 10,
     partId: undefined,
     exerciseName: ''
   })
   
   // 数据列表
   const exerciseList = ref<Exercise[]>([])
+  const total = ref(0)
   const bodyParts = ref<BodyPart[]>([])
   const dialogVisible = ref(false)
   const currentExercise = ref<Exercise | null>(null)
@@ -92,7 +132,8 @@
     try {
       const res = await exercise.getExerciseList(queryParams.value)
       if (res.data.code === 200) {
-        exerciseList.value = res.data.rows
+        exerciseList.value = res.data.data.rows
+        total.value = res.data.data.total
       }
     } catch (error) {
       ElMessage.error('获取锻炼项目列表失败')
@@ -119,12 +160,15 @@
   
   // 查询按钮点击事件
   const handleQuery = () => {
+    queryParams.value.pageNum = 1 // 搜索时重置为第一页
     getExerciseList()
   }
   
   // 重置按钮点击事件
   const resetQuery = () => {
     queryParams.value = {
+      pageNum: 1,
+      pageSize: 10,
       partId: undefined,
       exerciseName: ''
     }
@@ -135,6 +179,19 @@
   const showDetail = (exercise: Exercise) => {
     currentExercise.value = exercise
     dialogVisible.value = true
+  }
+  
+  // 处理每页显示数量变化
+  const handleSizeChange = (val: number) => {
+    queryParams.value.pageSize = val
+    queryParams.value.pageNum = 1 // 切换每页数量时重置为第一页
+    getExerciseList()
+  }
+  
+  // 处理页码变化
+  const handleCurrentChange = (val: number) => {
+    queryParams.value.pageNum = val
+    getExerciseList()
   }
   
   onMounted(() => {
@@ -149,6 +206,10 @@
   
     .filter-section {
       margin-bottom: 20px;
+  
+      .part-select {
+        width: 100px;
+      }
     }
   
     .exercise-grid {
@@ -165,6 +226,10 @@
       }
   
       .card-content {
+        .exercise-info {
+          margin-bottom: 10px;
+        }
+  
         .exercise-description {
           margin-bottom: 15px;
           color: #666;
@@ -192,5 +257,21 @@
         line-height: 1.6;
       }
     }
+  
+    .part-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      
+      .part-tag {
+        margin-right: 5px;
+        margin-bottom: 5px;
+      }
+    }
+  }
+  .pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
   }
   </style>

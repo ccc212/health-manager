@@ -2,6 +2,10 @@ package com.healthmanager.manage.service;
 
 import java.util.List;
 import com.healthmanager.manage.domain.Exercise;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.healthmanager.manage.domain.dto.ExerciseSearchDTO;
+import com.healthmanager.manage.domain.vo.ExerciseShowVO;
 
 /**
  * 锻炼项目Service接口
@@ -58,4 +62,8 @@ public interface IExerciseService
      * @return 结果
      */
     public int deleteExerciseByExerciseId(Long exerciseId);
+
+    List<ExerciseShowVO> selectExerciseShowList(ExerciseSearchDTO exerciseSearchDTO, int offset, Integer limit);
+
+    int countExerciseShowList(ExerciseSearchDTO exerciseSearchDTO);
 }

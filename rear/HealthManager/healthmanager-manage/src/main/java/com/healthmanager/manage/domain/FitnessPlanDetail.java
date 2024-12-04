@@ -7,9 +7,9 @@ import com.healthmanager.common.core.domain.BaseEntity;
 
 /**
  * 健身计划详情对象 health_fitness_plan_detail
- * 
+ *
  * @author ccc212
- * @date 2024-11-05
+ * @date 2024-12-05
  */
 public class FitnessPlanDetail extends BaseEntity
 {
@@ -34,60 +34,74 @@ public class FitnessPlanDetail extends BaseEntity
     @Excel(name = "锻炼强度", readConverterExp = "0=低,1=中,2=高")
     private String intensity;
 
-    public void setDetailId(Long detailId) 
+    /** 锻炼频率（天/周） */
+    @Excel(name = "锻炼频率", readConverterExp = "天=/周")
+    private Long frequency;
+
+    public void setDetailId(Long detailId)
     {
         this.detailId = detailId;
     }
 
-    public Long getDetailId() 
+    public Long getDetailId()
     {
         return detailId;
     }
-    public void setPlanId(Long planId) 
+    public void setPlanId(Long planId)
     {
         this.planId = planId;
     }
 
-    public Long getPlanId() 
+    public Long getPlanId()
     {
         return planId;
     }
-    public void setExerciseId(Long exerciseId) 
+    public void setExerciseId(Long exerciseId)
     {
         this.exerciseId = exerciseId;
     }
 
-    public Long getExerciseId() 
+    public Long getExerciseId()
     {
         return exerciseId;
     }
-    public void setDuration(Long duration) 
+    public void setDuration(Long duration)
     {
         this.duration = duration;
     }
 
-    public Long getDuration() 
+    public Long getDuration()
     {
         return duration;
     }
-    public void setIntensity(String intensity) 
+    public void setIntensity(String intensity)
     {
         this.intensity = intensity;
     }
 
-    public String getIntensity() 
+    public String getIntensity()
     {
         return intensity;
+    }
+    public void setFrequency(Long frequency)
+    {
+        this.frequency = frequency;
+    }
+
+    public Long getFrequency()
+    {
+        return frequency;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("detailId", getDetailId())
-            .append("planId", getPlanId())
-            .append("exerciseId", getExerciseId())
-            .append("duration", getDuration())
-            .append("intensity", getIntensity())
-            .toString();
+                .append("detailId", getDetailId())
+                .append("planId", getPlanId())
+                .append("exerciseId", getExerciseId())
+                .append("duration", getDuration())
+                .append("intensity", getIntensity())
+                .append("frequency", getFrequency())
+                .toString();
     }
 }

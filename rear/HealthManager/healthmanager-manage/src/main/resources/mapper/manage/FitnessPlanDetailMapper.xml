@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.healthmanager.manage.mapper.FitnessPlanDetailMapper">
-    
+
     <resultMap type="FitnessPlanDetail" id="FitnessPlanDetailResult">
         <result property="detailId"    column="detail_id"    />
         <result property="planId"    column="plan_id"    />
         <result property="exerciseId"    column="exercise_id"    />
         <result property="duration"    column="duration"    />
         <result property="intensity"    column="intensity"    />
+        <result property="frequency"    column="frequency"    />
     </resultMap>
 
     <sql id="selectFitnessPlanDetailVo">
-        select detail_id, plan_id, exercise_id, duration, intensity from health_fitness_plan_detail
+        select detail_id, plan_id, exercise_id, duration, intensity, frequency from health_fitness_plan_detail
     </sql>
 
     <select id="selectFitnessPlanDetailList" parameterType="FitnessPlanDetail" resultMap="FitnessPlanDetailResult">
         <include refid="selectFitnessPlanDetailVo"/>
-        <where>  
+        <where>
             <if test="planId != null "> and plan_id = #{planId}</if>
             <if test="exerciseId != null "> and exercise_id = #{exerciseId}</if>
             <if test="duration != null "> and duration = #{duration}</if>
             <if test="intensity != null  and intensity != ''"> and intensity = #{intensity}</if>
+            <if test="frequency != null "> and frequency = #{frequency}</if>
         </where>
     </select>
-    
+
     <select id="selectFitnessPlanDetailByDetailId" parameterType="Long" resultMap="FitnessPlanDetailResult">
         <include refid="selectFitnessPlanDetailVo"/>
         where detail_id = #{detailId}
@@ -38,13 +40,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="exerciseId != null">exercise_id,</if>
             <if test="duration != null">duration,</if>
             <if test="intensity != null and intensity != ''">intensity,</if>
-         </trim>
+            <if test="frequency != null">frequency,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="planId != null">#{planId},</if>
             <if test="exerciseId != null">#{exerciseId},</if>
             <if test="duration != null">#{duration},</if>
             <if test="intensity != null and intensity != ''">#{intensity},</if>
-         </trim>
+            <if test="frequency != null">#{frequency},</if>
+        </trim>
     </insert>
 
     <update id="updateFitnessPlanDetail" parameterType="FitnessPlanDetail">
@@ -54,6 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="exerciseId != null">exercise_id = #{exerciseId},</if>
             <if test="duration != null">duration = #{duration},</if>
             <if test="intensity != null and intensity != ''">intensity = #{intensity},</if>
+            <if test="frequency != null">frequency = #{frequency},</if>
         </trim>
         where detail_id = #{detailId}
     </update>
@@ -63,7 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteFitnessPlanDetailByDetailIds" parameterType="String">
-        delete from health_fitness_plan_detail where detail_id in 
+        delete from health_fitness_plan_detail where detail_id in
         <foreach item="detailId" collection="array" open="(" separator="," close=")">
             #{detailId}
         </foreach>

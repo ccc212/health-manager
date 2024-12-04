@@ -49,41 +49,63 @@ public class FitnessPlanServiceImpl implements IFitnessPlanService {
     public void generate(Long planId) {
         FitnessPlan fitnessPlan = fitnessPlanMapper.selectFitnessPlanByPlanId(planId);
         if (fitnessPlan == null) {
-//            TODO 自定义异常
-            return;
+            throw new RuntimeException("计划不存在");
         }
+        
         Long userId = fitnessPlan.getUserId();
         UserBodyData userBodyData = userBodyDataMapper.selectUserBodyDataByUserId(userId);
         List<Map<String, Object>> exerciseIdsAndNames = exerciseMapper.selectAllExerciseIdsAndNames();
 
+        // 锻炼项目列表
         String exerciseList = exerciseIdsAndNames.stream()
                 .map(exercise -> exercise.get("exercise_id") + ":" + exercise.get("exercise_name"))
                 .collect(Collectors.joining("、"));
-        String goals = fitnessPlan.getGoals();
-        String initialStatus = fitnessPlan.getInitialStatus();
-        String gender = userBodyData.getGender();
-        Integer age = userBodyData.getAge();
-        BigDecimal height = userBodyData.getHeight();
-        BigDecimal weight = userBodyData.getWeight();
 
-        String message = ZhipuModelUtil.buildFitnessPlanMessage(initialStatus, gender, age, height, weight, goals, exerciseList);
+        // 构建提问消息
+        String message = ZhipuModelUtil.buildFitnessPlanMessage(
+            fitnessPlan.getInitialStatus(), 
+            userBodyData.getGender(), 
+            userBodyData.getAge(), 
+            userBodyData.getHeight(), 
+            userBodyData.getWeight(), 
+            fitnessPlan.getGoals(), 
+            exerciseList
+        );
+
+        // 调用AI获取结果
         String result = ZhipuModelUtil.callZhipuModel(message);
-        Map<Integer, String> exercisePlan = new HashMap<>();
-
+        
+        // 删除该计划之前的详情记录
+        fitnessPlanDetailMapper.deleteFitnessPlanDetailByPlanId(planId);
+        
+        // 解析结果并保存
         String[] exercises = result.split("\\n");
         for (String exercise : exercises) {
-            String[] parts = exercise.split(":");
-            if (parts.length == 3) {
-                int id = Integer.parseInt(parts[0].trim());
+            String[] parts = exercise.trim().split(":");
+            if (parts.length == 4) {
+                // 解析数据
+                Long exerciseId = Long.parseLong(parts[0].trim());
                 String intensity = parts[1].trim();
-                String time = parts[2].trim();
-                exercisePlan.put(id, "强度: " + intensity + ", 时间: " + time + "分钟");
+                Long duration = Long.parseLong(parts[2].trim());
+                Long frequency = Long.parseLong(parts[3].trim());
+
+                // 创建详情记录
+                FitnessPlanDetail detail = new FitnessPlanDetail();
+                detail.setPlanId(planId);
+                detail.setExerciseId(exerciseId);
+                detail.setIntensity(intensity);
+                detail.setDuration(duration);
+                detail.setFrequency(frequency);
+
+                // 保存详情记录
+                fitnessPlanDetailMapper.insertFitnessPlanDetail(detail);
             }
         }
-
-        exercisePlan.forEach((id, details) -> {
-            System.out.println("健身项目ID: " + id + ", " + details);
-        });
+        
+        // 更新计划状态
+        fitnessPlan.setProgress("0");  // 设置初始进度
+        fitnessPlan.setCurrentStatus(fitnessPlan.getInitialStatus());  // 设置当前状态为初始状态
+        fitnessPlanMapper.updateFitnessPlan(fitnessPlan);
     }
 
     /**
