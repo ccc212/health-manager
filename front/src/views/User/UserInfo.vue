@@ -19,7 +19,7 @@
   
         <div class="profile-content">
           <!-- 头像部分 -->
-          <div class="avatar-container">
+          <!-- <div class="avatar-container">
             <el-avatar
               :size="100"
               :src="userInfo.avatar || defaultAvatar"
@@ -34,7 +34,7 @@
             >
               <el-button size="small" type="primary">更换头像</el-button>
             </el-upload>
-          </div>
+          </div> -->
   
           <!-- 用户信息部分 -->
           <el-form

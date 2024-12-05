@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthmanager.manage.mapper.DoctorMapper">
+    
+    <resultMap type="Doctor" id="DoctorResult">
+        <result property="doctorId"    column="doctor_id"    />
+        <result property="name"    column="name"    />
+        <result property="title"    column="title"    />
+        <result property="department"    column="department"    />
+        <result property="introduction"    column="introduction"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectDoctorVo">
+        select doctor_id, name, title, department, introduction, status, create_time, update_time from health_doctor
+    </sql>
+
+    <select id="selectDoctorList" parameterType="Doctor" resultMap="DoctorResult">
+        <include refid="selectDoctorVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="department != null  and department != ''"> and department = #{department}</if>
+            <if test="introduction != null  and introduction != ''"> and introduction = #{introduction}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectDoctorByDoctorId" parameterType="Long" resultMap="DoctorResult">
+        <include refid="selectDoctorVo"/>
+        where doctor_id = #{doctorId}
+    </select>
+
+    <insert id="insertDoctor" parameterType="Doctor" useGeneratedKeys="true" keyProperty="doctorId">
+        insert into health_doctor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="department != null and department != ''">department,</if>
+            <if test="introduction != null">introduction,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="department != null and department != ''">#{department},</if>
+            <if test="introduction != null">#{introduction},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDoctor" parameterType="Doctor">
+        update health_doctor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="department != null and department != ''">department = #{department},</if>
+            <if test="introduction != null">introduction = #{introduction},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where doctor_id = #{doctorId}
+    </update>
+
+    <delete id="deleteDoctorByDoctorId" parameterType="Long">
+        delete from health_doctor where doctor_id = #{doctorId}
+    </delete>
+
+    <delete id="deleteDoctorByDoctorIds" parameterType="String">
+        delete from health_doctor where doctor_id in 
+        <foreach item="doctorId" collection="array" open="(" separator="," close=")">
+            #{doctorId}
+        </foreach>
+    </delete>
+</mapper>

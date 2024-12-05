@@ -144,6 +144,6 @@ xss:
 # 智谱大模型
 zhipu:
   # 智谱api key
-  apiKey: 8710347809e24058ab108ff27ea984b5.PKSvTJedQ6GGbQWk
+  apiKey:  # 请填写自己的api key
   # 模型
   model: glm-4-flash

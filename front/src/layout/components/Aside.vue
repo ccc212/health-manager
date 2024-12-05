@@ -67,7 +67,7 @@
       >
         <el-menu-item index="/medical/appointment">
           <el-icon><Calendar /></el-icon>
-          <span>预约挂号</span>
+          <span>预约医生</span>
         </el-menu-item>
         <el-menu-item index="/medical/record">
           <el-icon><Document /></el-icon>
